@@ -92,37 +92,41 @@ export class ApRoot {
       return bk(m.params);
     })();
 
+    const showHeader = back || !!m.match.reload || getHeaderButtons().length > 0;
+
     return (
       <Host class={{ 'fit-page': !!m.match.fitPage }}>
-        <div class="header">
-          {back && (
-            <a class="back" {...href(back, true)}>
-              <ap-icon icon="arrowReturnLeft" />
-            </a>
-          )}
-          {m.match.reload && (
-            <button class="reload clear" onClick={this.handleReloadClick}>
-              <ap-icon icon="reload" />
-            </button>
-          )}
-          <span class="spacer" />
-          {getHeaderButtons().map(v => {
-            if (v.href) {
-              return (
-                <a class="button slim" {...href(v.href)}>
-                  {v.label}
-                </a>
-              );
-            }
-            if (v.handler) {
-              return (
-                <button class="slim" onClick={v.handler}>
-                  {v.label}
-                </button>
-              );
-            }
-          })}
-        </div>
+        {showHeader && (
+          <div class="header">
+            {back && (
+              <a class="back" {...href(back, true)}>
+                <ap-icon icon="arrowReturnLeft" />
+              </a>
+            )}
+            {m.match.reload && (
+              <button class="reload clear" onClick={this.handleReloadClick}>
+                <ap-icon icon="reload" />
+              </button>
+            )}
+            <span class="spacer" />
+            {getHeaderButtons().map(v => {
+              if (v.href) {
+                return (
+                  <a class="button slim" {...href(v.href)}>
+                    {v.label}
+                  </a>
+                );
+              }
+              if (v.handler) {
+                return (
+                  <button class="slim" onClick={v.handler}>
+                    {v.label}
+                  </button>
+                );
+              }
+            })}
+          </div>
+        )}
         {[...this.tags.entries()].map(([Tag, tagInfo]) => {
           const active = Tag == curTag;
           return (

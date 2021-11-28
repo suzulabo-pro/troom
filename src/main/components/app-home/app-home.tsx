@@ -1,5 +1,5 @@
 import { Component, h, Host, Prop } from '@stencil/core';
-import { setDocumentTitle, setHeaderButtons } from '../../../shared-web';
+import { setDocumentTitle } from '../../../shared-web';
 import { App } from '../../app/app';
 
 @Component({
@@ -17,27 +17,24 @@ export class AppHome {
     //
   }
 
+  private handlers = {
+    createClick: async () => {
+      await this.app.processLoading(async () => {
+        await this.app.createRoom();
+      });
+    },
+  };
+
   private renderContext() {
     return {
       msgs: this.app.msgs,
+      handlers: this.handlers,
     };
   }
-
-  private headerButtons = [
-    {
-      label: this.app.msgs.home.config,
-      href: '/config',
-    },
-    {
-      label: this.app.msgs.home.about,
-      href: '/about',
-    },
-  ];
 
   render() {
     if (this.activePage) {
       setDocumentTitle(this.app.msgs.home.pageTitle);
-      setHeaderButtons(this.headerButtons);
     }
 
     return render(this.renderContext());
@@ -51,7 +48,9 @@ const render = (ctx: RenderContext) => {
 };
 
 const renderContent = (ctx: RenderContext) => {
-  //
-  console.log(ctx);
-  return <div>home</div>;
+  return (
+    <button class="create" onClick={ctx.handlers.createClick}>
+      {ctx.msgs.home.createBtn}
+    </button>
+  );
 };

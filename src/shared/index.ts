@@ -1,5 +1,10 @@
 export * from './appenv';
+export * from './assert';
 export * from './base-error';
 export * from './datatypes';
 export * from './lazy-promise';
 export * from './path-matcher';
+
+import bsx from 'base-x';
+
+export const bs62 = bsx('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');

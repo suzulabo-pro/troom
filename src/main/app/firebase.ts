@@ -12,7 +12,7 @@ import {
   getFunctions,
   httpsCallable,
 } from 'firebase/functions';
-import { AppEnv } from '../../shared';
+import { AppEnv, CreateRoomParams, CreateRoomResult } from '../../shared';
 
 const devonly_setEmulator = (functions: Functions, firestore: Firestore) => {
   if (!Build.isDev) {
@@ -55,8 +55,7 @@ export class AppFirebase {
     return res.data;
   }
 
-  async createRoom() {
-    //TODO
-    return this.callFunc({});
+  async createRoom(params: CreateRoomParams) {
+    return this.callFunc<CreateRoomParams, CreateRoomResult>(params);
   }
 }

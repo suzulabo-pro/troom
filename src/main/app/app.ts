@@ -1,4 +1,5 @@
-import { AppError } from '../../shared';
+import nacl from 'tweetnacl';
+import { AppError, assertIsDefined, bs62 } from '../../shared';
 import { AppFirebase } from './firebase';
 import { AppMsg } from './msg';
 
@@ -7,6 +8,30 @@ const BUILD_INFO = {
   repo: '__BUILD_REPO__',
   time: parseInt('__BUILT_TIME__'),
 } as const;
+
+interface Room {
+  secKey: string;
+  adminKey?: string;
+}
+type Rooms = Record<string, Room>;
+
+class RoomsManager {
+  get() {
+    return JSON.parse(localStorage.getItem('rooms') || '{}') as Rooms;
+  }
+  set = (rooms: Rooms) => {
+    localStorage.setItem('rooms', JSON.stringify(rooms));
+  };
+  add(id: string, room: Room) {
+    const rooms = this.get();
+    if (!(id in rooms)) {
+      rooms[id] = room;
+      this.set(rooms);
+    }
+  }
+}
+
+const roomsMan = new RoomsManager();
 
 export class App {
   readonly buildInfo = BUILD_INFO;
@@ -58,5 +83,28 @@ export class App {
 
   get msgs() {
     return this.appMsg.msgs;
+  }
+
+  getRooms() {
+    return roomsMan.get();
+  }
+
+  async createRoom() {
+    const secKey = bs62.encode(nacl.randomBytes(32));
+    const adminKeysB = nacl.box.keyPair();
+    const adminKeys = {
+      secKey: bs62.encode(adminKeysB.secretKey),
+      pubKey: bs62.encode(adminKeysB.publicKey),
+    };
+
+    const result = await this.appFirebase.createRoom({
+      method: 'CreateRoom',
+      adminKey: adminKeys.pubKey,
+    });
+
+    const id = result.id;
+    assertIsDefined(id);
+
+    roomsMan.add(id, { secKey, adminKey: adminKeys.secKey });
   }
 }

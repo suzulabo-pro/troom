@@ -126,16 +126,6 @@ const createDevProxy = (port: number, httpsPort: number, patterns: ProxyConfig[]
 
 export const startDevProxy = () => {
   createDevProxy(9292, 9392, [
-    {
-      pattern: '/www.googleapis.com/identitytoolkit/v3/relyingparty/getProjectConfig',
-      proxy: (req, res) => {
-        // hack emulator's authorizedDomains
-        // https://github.com/firebase/firebase-tools/issues/3104
-        const host = (req.headers.host || '').split(':')[0];
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ projectId: '12345', authorizedDomains: ['localhost', host] }));
-      },
-    },
     { proxy: 9099, pattern: '/www.googleapis.com/identitytoolkit/' }, // auth
     { proxy: 9099, pattern: '/securetoken.googleapis.com/' }, // auth
     { proxy: 9099, pattern: '/emulator/auth' }, // auth
@@ -145,16 +135,6 @@ export const startDevProxy = () => {
     { proxy: 5001, pattern: new RegExp('.+/us-central1/.+') }, // functions
     { proxy: 3370, pattern: '' }, // stencil
   ]);
-  console.log('Console: http://localhost:9292/');
-  console.log('Console: https://localhost:9392/');
-
-  createDevProxy(9293, 9393, [
-    { proxy: 8080, pattern: '/v1/' }, // firestore REST
-    { proxy: 8080, pattern: '/google.firestore.v1.Firestore/' }, // firestore RPC
-    { proxy: 5001, pattern: new RegExp('.+/us-central1/.+') }, // functions
-    { proxy: 5000, pattern: '/data/' }, // functions by hosting
-    { proxy: 3371, pattern: '' }, // stencil
-  ]);
-  console.log('Client: http://localhost:9293/');
-  console.log('Client: https://localhost:9393/');
+  console.log('Main: http://localhost:9292/');
+  console.log('Main: https://localhost:9392/');
 };
