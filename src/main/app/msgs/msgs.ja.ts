@@ -16,6 +16,7 @@ export const msgs: Msgs = {
       }
       return '';
     },
+    dataError: 'データの読み込み中にエラーが発生しました。\nしばらくしてから再度お試しください。',
     pageTitle: titleSuffix,
   },
   error: {

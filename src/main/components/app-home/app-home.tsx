@@ -1,6 +1,7 @@
-import { Component, h, Host, Prop, State } from '@stencil/core';
-import { ROOM_NAME_MAX_LENGTH } from '../../../shared';
-import { setDocumentTitle } from '../../../shared-web';
+import { Component, Fragment, h, Host, Prop, State } from '@stencil/core';
+import { AsyncReturnType } from 'type-fest';
+import { assertIsDefined, ROOM_NAME_MAX_LENGTH } from '../../../shared';
+import { href, PromiseState, setDocumentTitle } from '../../../shared-web';
 import { App } from '../../app/app';
 
 @Component({
@@ -20,8 +21,18 @@ export class AppHome {
   @State()
   values?: { name?: string };
 
+  @State()
+  dataState?: PromiseState<AsyncReturnType<AppHome['loadData']>>;
+
+  private async loadData() {
+    const rooms = await this.app.loadRooms();
+    return { rooms };
+  }
+
   componentWillRender() {
-    //
+    if (!this.dataState) {
+      this.dataState = new PromiseState(this.loadData());
+    }
   }
 
   private handlers = {
@@ -47,6 +58,8 @@ export class AppHome {
   };
 
   private renderContext() {
+    const dataStatus = this.dataState?.status();
+    assertIsDefined(dataStatus);
     const canSubmit = !!this.values?.name;
 
     return {
@@ -54,6 +67,7 @@ export class AppHome {
       handlers: this.handlers,
       showCreateModal: this.showCreateModal,
       values: this.values,
+      dataStatus,
       canSubmit,
     };
   }
@@ -72,18 +86,40 @@ type RenderContext = ReturnType<AppHome['renderContext']>;
 const render = (ctx: RenderContext) => {
   return (
     <Host>
-      {renderContent(ctx)}
+      {renderRooms(ctx)}
       {renderCreateModal(ctx)}
     </Host>
   );
 };
 
-const renderContent = (ctx: RenderContext) => {
-  return (
-    <button class="create" onClick={ctx.handlers.createClick}>
-      {ctx.msgs.home.createBtn}
-    </button>
-  );
+const renderRooms = (ctx: RenderContext) => {
+  switch (ctx.dataStatus.state) {
+    case 'rejected':
+      return <span class="data-error">{ctx.msgs.common.dataError}</span>;
+    case 'fulfilled-empty':
+      return;
+    case 'fulfilled': {
+      const value = ctx.dataStatus.value;
+      return (
+        <Fragment>
+          <div class="rooms-grid">
+            {value.rooms.map(v => {
+              return (
+                <a {...href(`/${v.id}`)} class="card">
+                  {v.name}
+                </a>
+              );
+            })}
+          </div>
+          <button class="create" onClick={ctx.handlers.createClick}>
+            {ctx.msgs.home.createBtn}
+          </button>
+        </Fragment>
+      );
+    }
+    default:
+      return <ap-spinner />;
+  }
 };
 
 const renderCreateModal = (ctx: RenderContext) => {

@@ -2,8 +2,10 @@ import { Build } from '@stencil/core';
 import { FirebaseApp, initializeApp } from 'firebase/app';
 import {
   connectFirestoreEmulator,
+  doc,
   enableMultiTabIndexedDbPersistence,
   Firestore,
+  getDocFromServer,
   getFirestore,
 } from 'firebase/firestore';
 import {
@@ -12,7 +14,7 @@ import {
   getFunctions,
   httpsCallable,
 } from 'firebase/functions';
-import { AppEnv, CreateRoomParams, CreateRoomResult } from '../../shared';
+import { AppEnv, CreateRoomParams, CreateRoomResult, Room } from '../../shared';
 
 const devonly_setEmulator = (functions: Functions, firestore: Firestore) => {
   if (!Build.isDev) {
@@ -57,5 +59,11 @@ export class AppFirebase {
 
   async createRoom(params: CreateRoomParams) {
     return this.callFunc<CreateRoomParams, CreateRoomResult>(params);
+  }
+
+  async getRoom(id: string) {
+    const docRef = doc(this.firestore, `rooms/${id}`);
+    const data = await getDocFromServer(docRef);
+    return data.data() as Room | undefined;
   }
 }

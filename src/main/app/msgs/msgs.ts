@@ -7,6 +7,7 @@ export interface Msgs {
     ok: string;
     datetime: (d: number) => string;
     pageTitle: string;
+    dataError: string;
   };
   error: {
     main: string;
