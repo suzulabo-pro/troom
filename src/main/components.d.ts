@@ -30,6 +30,12 @@ export namespace Components {
         "href"?: string;
         "srcPromise"?: PromiseState<string>;
     }
+    interface ApInput {
+        "label"?: string;
+        "maxLength"?: number;
+        "textarea"?: boolean;
+        "value"?: string;
+    }
     interface ApLoading {
     }
     interface ApModal {
@@ -78,6 +84,12 @@ declare global {
     var HTMLApImageElement: {
         prototype: HTMLApImageElement;
         new (): HTMLApImageElement;
+    };
+    interface HTMLApInputElement extends Components.ApInput, HTMLStencilElement {
+    }
+    var HTMLApInputElement: {
+        prototype: HTMLApInputElement;
+        new (): HTMLApInputElement;
     };
     interface HTMLApLoadingElement extends Components.ApLoading, HTMLStencilElement {
     }
@@ -132,6 +144,7 @@ declare global {
         "ap-error": HTMLApErrorElement;
         "ap-icon": HTMLApIconElement;
         "ap-image": HTMLApImageElement;
+        "ap-input": HTMLApInputElement;
         "ap-loading": HTMLApLoadingElement;
         "ap-modal": HTMLApModalElement;
         "ap-root": HTMLApRootElement;
@@ -163,6 +176,12 @@ declare namespace LocalJSX {
         "href"?: string;
         "srcPromise"?: PromiseState<string>;
     }
+    interface ApInput {
+        "label"?: string;
+        "maxLength"?: number;
+        "textarea"?: boolean;
+        "value"?: string;
+    }
     interface ApLoading {
     }
     interface ApModal {
@@ -192,6 +211,7 @@ declare namespace LocalJSX {
         "ap-error": ApError;
         "ap-icon": ApIcon;
         "ap-image": ApImage;
+        "ap-input": ApInput;
         "ap-loading": ApLoading;
         "ap-modal": ApModal;
         "ap-root": ApRoot;
@@ -210,6 +230,7 @@ declare module "@stencil/core" {
             "ap-error": LocalJSX.ApError & JSXBase.HTMLAttributes<HTMLApErrorElement>;
             "ap-icon": LocalJSX.ApIcon & JSXBase.HTMLAttributes<HTMLApIconElement>;
             "ap-image": LocalJSX.ApImage & JSXBase.HTMLAttributes<HTMLApImageElement>;
+            "ap-input": LocalJSX.ApInput & JSXBase.HTMLAttributes<HTMLApInputElement>;
             "ap-loading": LocalJSX.ApLoading & JSXBase.HTMLAttributes<HTMLApLoadingElement>;
             "ap-modal": LocalJSX.ApModal & JSXBase.HTMLAttributes<HTMLApModalElement>;
             "ap-root": LocalJSX.ApRoot & JSXBase.HTMLAttributes<HTMLApRootElement>;

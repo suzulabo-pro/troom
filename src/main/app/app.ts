@@ -1,5 +1,5 @@
 import nacl from 'tweetnacl';
-import { AppError, assertIsDefined, bs62 } from '../../shared';
+import { AppError, assertIsDefined, bs62, MASTER_KEY_BYTES } from '../../shared';
 import { AppFirebase } from './firebase';
 import { AppMsg } from './msg';
 
@@ -10,7 +10,7 @@ const BUILD_INFO = {
 } as const;
 
 interface Room {
-  secKey: string;
+  masterKey: string;
   adminKey?: string;
 }
 type Rooms = Record<string, Room>;
@@ -89,8 +89,8 @@ export class App {
     return roomsMan.get();
   }
 
-  async createRoom() {
-    const secKey = bs62.encode(nacl.randomBytes(32));
+  async createRoom(name: string) {
+    const masterKey = bs62.encode(nacl.randomBytes(MASTER_KEY_BYTES));
     const adminKeysB = nacl.box.keyPair();
     const adminKeys = {
       secKey: bs62.encode(adminKeysB.secretKey),
@@ -99,12 +99,13 @@ export class App {
 
     const result = await this.appFirebase.createRoom({
       method: 'CreateRoom',
+      name,
       adminKey: adminKeys.pubKey,
     });
 
     const id = result.id;
     assertIsDefined(id);
 
-    roomsMan.add(id, { secKey, adminKey: adminKeys.secKey });
+    roomsMan.add(id, { masterKey, adminKey: adminKeys.secKey });
   }
 }

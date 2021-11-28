@@ -14,6 +14,7 @@ export interface Room {
 
 export interface CreateRoomParams {
   method: 'CreateRoom';
+  name: string;
   adminKey: string;
 }
 

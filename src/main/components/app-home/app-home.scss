@@ -4,4 +4,20 @@ app-home {
   button.create {
     margin: auto;
   }
+
+  .create-modal {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+
+    button {
+      align-self: center;
+    }
+    button.submit {
+      margin-top: 30px;
+    }
+    button.cancel {
+      margin-top: 10px;
+    }
+  }
 }

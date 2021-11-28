@@ -1,4 +1,4 @@
-import '../../shared-web/components/ap-checkbox/ap-checkbox';
+import '../../shared-web/components/ap-input/ap-input';
 import '../../shared-web/components/ap-error/ap-error';
 import '../../shared-web/components/ap-icon/ap-icon';
 import '../../shared-web/components/ap-image/ap-image';

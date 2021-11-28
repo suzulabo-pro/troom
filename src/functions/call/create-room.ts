@@ -7,8 +7,11 @@ export const createRoom = async (
   _context: CallableContext,
   adminApp: FirebaseAdminApp,
 ): Promise<CreateRoomResult> => {
-  const { adminKey } = params;
+  const { name, adminKey } = params;
 
+  if (!name) {
+    throw new AppError('invalid name');
+  }
   if (!adminKey) {
     throw new AppError('invalid adminKey');
   }
@@ -20,6 +23,7 @@ export const createRoom = async (
   const docRef = firestore.doc(`rooms/${id}`);
 
   await docRef.create({
+    name,
     adminKey,
     uT: serverTimestamp() as any,
     cT: serverTimestamp() as any,

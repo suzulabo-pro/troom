@@ -31,6 +31,7 @@ export const msgs: Msgs = {
   },
   home: {
     pageTitle: titleSuffix,
-    createBtn: 'ROOMを作る',
+    createBtn: 'ルームを作る',
+    createForm: { name: 'ルーム名' },
   },
 };

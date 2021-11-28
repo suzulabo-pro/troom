@@ -17,5 +17,8 @@ export interface Msgs {
   home: {
     pageTitle: string;
     createBtn: string;
+    createForm: {
+      name: string;
+    };
   };
 }
