@@ -22,4 +22,7 @@ export interface Msgs {
       name: string;
     };
   };
+  room: {
+    pageTitle: (s: string) => string;
+  };
 }

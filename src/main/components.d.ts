@@ -9,10 +9,6 @@ import { Icons } from "../shared-web/components/ap-icon/ap-icon";
 import { PromiseState, RouteMatch } from "../shared-web";
 import { App } from "./app/app";
 export namespace Components {
-    interface ApCheckbox {
-        "checked"?: boolean;
-        "label"?: string;
-    }
     interface ApError {
         "msgs": {
     main: string;
@@ -57,16 +53,15 @@ export namespace Components {
         "activePage": boolean;
         "app": App;
     }
+    interface AppRoom {
+        "activePage": boolean;
+        "app": App;
+        "roomID": string;
+    }
     interface AppRoot {
     }
 }
 declare global {
-    interface HTMLApCheckboxElement extends Components.ApCheckbox, HTMLStencilElement {
-    }
-    var HTMLApCheckboxElement: {
-        prototype: HTMLApCheckboxElement;
-        new (): HTMLApCheckboxElement;
-    };
     interface HTMLApErrorElement extends Components.ApError, HTMLStencilElement {
     }
     var HTMLApErrorElement: {
@@ -133,6 +128,12 @@ declare global {
         prototype: HTMLAppHomeElement;
         new (): HTMLAppHomeElement;
     };
+    interface HTMLAppRoomElement extends Components.AppRoom, HTMLStencilElement {
+    }
+    var HTMLAppRoomElement: {
+        prototype: HTMLAppRoomElement;
+        new (): HTMLAppRoomElement;
+    };
     interface HTMLAppRootElement extends Components.AppRoot, HTMLStencilElement {
     }
     var HTMLAppRootElement: {
@@ -140,7 +141,6 @@ declare global {
         new (): HTMLAppRootElement;
     };
     interface HTMLElementTagNameMap {
-        "ap-checkbox": HTMLApCheckboxElement;
         "ap-error": HTMLApErrorElement;
         "ap-icon": HTMLApIconElement;
         "ap-image": HTMLApImageElement;
@@ -152,14 +152,11 @@ declare global {
         "ap-style": HTMLApStyleElement;
         "ap-textview": HTMLApTextviewElement;
         "app-home": HTMLAppHomeElement;
+        "app-room": HTMLAppRoomElement;
         "app-root": HTMLAppRootElement;
     }
 }
 declare namespace LocalJSX {
-    interface ApCheckbox {
-        "checked"?: boolean;
-        "label"?: string;
-    }
     interface ApError {
         "msgs"?: {
     main: string;
@@ -204,10 +201,14 @@ declare namespace LocalJSX {
         "activePage": boolean;
         "app": App;
     }
+    interface AppRoom {
+        "activePage": boolean;
+        "app": App;
+        "roomID": string;
+    }
     interface AppRoot {
     }
     interface IntrinsicElements {
-        "ap-checkbox": ApCheckbox;
         "ap-error": ApError;
         "ap-icon": ApIcon;
         "ap-image": ApImage;
@@ -219,6 +220,7 @@ declare namespace LocalJSX {
         "ap-style": ApStyle;
         "ap-textview": ApTextview;
         "app-home": AppHome;
+        "app-room": AppRoom;
         "app-root": AppRoot;
     }
 }
@@ -226,7 +228,6 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
-            "ap-checkbox": LocalJSX.ApCheckbox & JSXBase.HTMLAttributes<HTMLApCheckboxElement>;
             "ap-error": LocalJSX.ApError & JSXBase.HTMLAttributes<HTMLApErrorElement>;
             "ap-icon": LocalJSX.ApIcon & JSXBase.HTMLAttributes<HTMLApIconElement>;
             "ap-image": LocalJSX.ApImage & JSXBase.HTMLAttributes<HTMLApImageElement>;
@@ -238,6 +239,7 @@ declare module "@stencil/core" {
             "ap-style": LocalJSX.ApStyle & JSXBase.HTMLAttributes<HTMLApStyleElement>;
             "ap-textview": LocalJSX.ApTextview & JSXBase.HTMLAttributes<HTMLApTextviewElement>;
             "app-home": LocalJSX.AppHome & JSXBase.HTMLAttributes<HTMLAppHomeElement>;
+            "app-room": LocalJSX.AppRoom & JSXBase.HTMLAttributes<HTMLAppRoomElement>;
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
         }
     }

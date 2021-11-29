@@ -94,6 +94,10 @@ export class App {
     return this.appMsg.msgs;
   }
 
+  isMyRoom(id: string) {
+    return id in roomsMan.get();
+  }
+
   async createRoom(name: string) {
     const masterKey = bs62.encode(nacl.randomBytes(MASTER_KEY_BYTES));
     const adminKeysB = nacl.box.keyPair();
@@ -129,5 +133,9 @@ export class App {
     }
 
     return rooms;
+  }
+
+  async getRoom(id: string) {
+    return this.appFirebase.getRoom(id);
   }
 }

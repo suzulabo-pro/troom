@@ -2,10 +2,8 @@ import { Build } from '@stencil/core';
 import { FirebaseApp, initializeApp } from 'firebase/app';
 import {
   connectFirestoreEmulator,
-  doc,
   enableMultiTabIndexedDbPersistence,
   Firestore,
-  getDocFromServer,
   getFirestore,
 } from 'firebase/firestore';
 import {
@@ -15,6 +13,7 @@ import {
   httpsCallable,
 } from 'firebase/functions';
 import { AppEnv, CreateRoomParams, CreateRoomResult, Room } from '../../shared';
+import { FirestoreHelper } from '../../shared-web';
 
 const devonly_setEmulator = (functions: Functions, firestore: Firestore) => {
   if (!Build.isDev) {
@@ -29,6 +28,7 @@ const devonly_setEmulator = (functions: Functions, firestore: Firestore) => {
 export class AppFirebase {
   private functions: Functions;
   private firestore: Firestore;
+  private firestoreHelper: FirestoreHelper;
 
   constructor(private appEnv: AppEnv, private firebaseApp?: FirebaseApp) {
     if (!this.firebaseApp) {
@@ -37,6 +37,7 @@ export class AppFirebase {
 
     this.functions = getFunctions(this.firebaseApp, this.appEnv.env.functionsRegion);
     this.firestore = getFirestore(this.firebaseApp);
+    this.firestoreHelper = new FirestoreHelper(this.firestore);
     devonly_setEmulator(this.functions, this.firestore);
   }
 
@@ -61,9 +62,16 @@ export class AppFirebase {
     return this.callFunc<CreateRoomParams, CreateRoomResult>(params);
   }
 
-  async getRoom(id: string) {
-    const docRef = doc(this.firestore, `rooms/${id}`);
-    const data = await getDocFromServer(docRef);
-    return data.data() as Room | undefined;
+  async getRoom(id: string, temporary?: boolean) {
+    return this.firestoreHelper.listenAndGet<Room>(
+      `rooms/${id}`,
+      (oldData, newData) => {
+        if (oldData && newData) {
+          return oldData.uT.toMillis() != newData.uT.toMillis();
+        }
+        return true;
+      },
+      temporary,
+    );
   }
 }

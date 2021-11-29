@@ -35,4 +35,7 @@ export const msgs: Msgs = {
     createBtn: 'ルームを作る',
     createForm: { name: 'ルーム名' },
   },
+  room: {
+    pageTitle: (s: string) => `${s} - ${titleSuffix}`,
+  },
 };

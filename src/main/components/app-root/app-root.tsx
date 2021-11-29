@@ -1,5 +1,5 @@
 import { Component, h, Host } from '@stencil/core';
-import { AppEnv, AppError } from '../../../shared';
+import { AppEnv, AppError, ROOM_ID_LENGTH } from '../../../shared';
 import { RouteMatch } from '../../../shared-web';
 import { App } from '../../app/app';
 import { AppFirebase } from '../../app/firebase';
@@ -9,6 +9,12 @@ const matches: RouteMatch[] = [
   {
     pattern: '',
     tag: 'app-home',
+  },
+  {
+    pattern: new RegExp(`^[0-9A-Z]{${ROOM_ID_LENGTH}}$`),
+    name: 'roomID',
+    tag: 'app-room',
+    back: '/',
   },
 ];
 
