@@ -5,6 +5,7 @@ export * from './constants';
 export * from './datatypes';
 export * from './lazy-promise';
 export * from './path-matcher';
+export * from './firestore';
 
 import bsx from 'base-x';
 

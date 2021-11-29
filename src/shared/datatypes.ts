@@ -1,14 +1,7 @@
 const languages = ['en', 'ja'] as const;
 export type Lang = typeof languages[number];
 
-type Timestamp = {
-  toMillis: () => number;
-};
-type Blob = {
-  toBase64: () => string;
-};
-
-export interface Room {
+export interface _Room<Timestamp, Blob> {
   name: string;
   signKey: Blob;
   adminKey: Blob;
@@ -37,8 +30,9 @@ export interface CreateRoomResult {
 export interface PutRoomMsgParams {
   method: 'PutRoomMsg';
   id: string;
-  fp: Uint8Array;
-  k: Uint8Array;
+  fp: string;
+  k: string;
   author: string;
-  body: Uint8Array;
+  body: string;
+  sign: string;
 }

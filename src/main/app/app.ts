@@ -1,5 +1,6 @@
 import nacl from 'tweetnacl';
-import { AppError, assertIsDefined, bs62, Room } from '../../shared';
+import { AppError, assertIsDefined, bs62 } from '../../shared';
+import { Room } from '../../shared-web';
 import { AppFirebase } from './firebase';
 import { AppMsg } from './msg';
 

@@ -1,5 +1,6 @@
 import nacl from 'tweetnacl';
-import { bs62, CreateRoomParams, CreateRoomResult, Room } from '../../shared';
+import { bs62, CreateRoomParams, CreateRoomResult, ROOM_ID_LENGTH } from '../../shared';
+import { RoomW } from '../datatypes';
 import { CallableContext, FirebaseAdminApp, getFirestore, serverTimestamp } from '../firebase';
 
 export const createRoom = async (
@@ -11,18 +12,18 @@ export const createRoom = async (
 
   const firestore = getFirestore(adminApp);
 
-  const id = genID(5);
+  const id = genID(ROOM_ID_LENGTH);
 
   const docRef = firestore.doc(`rooms/${id}`);
 
   await docRef.create({
     name,
-    signKey: Buffer.from(bs62.decode(signKey)) as any,
-    adminKey: Buffer.from(bs62.decode(adminKey)) as any,
+    signKey: Buffer.from(bs62.decode(signKey)),
+    adminKey: Buffer.from(bs62.decode(adminKey)),
     msgs: [],
-    uT: serverTimestamp() as any,
-    cT: serverTimestamp() as any,
-  } as Room);
+    uT: serverTimestamp(),
+    cT: serverTimestamp(),
+  } as RoomW);
 
   return { id };
 };

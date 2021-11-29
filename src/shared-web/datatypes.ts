@@ -1,3 +1,5 @@
+import { Bytes, Timestamp } from 'firebase/firestore';
+import { _Room } from '../shared';
 import { Match } from '../shared/path-matcher';
 
 export type RouteMatch = Match & {
@@ -6,3 +8,5 @@ export type RouteMatch = Match & {
   reload?: boolean;
   fitPage?: boolean;
 };
+
+export type Room = _Room<Timestamp, Bytes>;

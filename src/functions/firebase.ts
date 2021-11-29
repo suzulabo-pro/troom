@@ -15,6 +15,7 @@ export type DocumentSnapshot = firestore.DocumentSnapshot;
 export type QueryDocumentSnapshot = firestore.QueryDocumentSnapshot;
 export type DocumentChange = functions.Change<DocumentSnapshot>;
 export type Timestamp = firestore.Timestamp;
+export type FieldValue = firestore.FieldValue;
 export type Transaction = firestore.Transaction;
 
 export const Timestamp = firestore.Timestamp;

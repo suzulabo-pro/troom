@@ -3,6 +3,7 @@ import { CallableContext, FirebaseAdminApp } from '../firebase';
 import { validators } from '../json-schema';
 import { logger } from '../utils/logger';
 import { createRoom } from './create-room';
+import { putRoomMsg } from './put-room-msg';
 
 class InvalidParamsError extends BaseError {
   constructor(public method: string, public data: any) {
@@ -30,6 +31,12 @@ export const httpsCallHandler = async (
         if (validators.CreateRoomParams(data)) {
           return createRoom(data, context, adminApp);
         }
+        break;
+      case 'PutRoomMsg':
+        if (validators.PutRoomMsgParams(data)) {
+          return putRoomMsg(data, context, adminApp);
+        }
+        break;
     }
   } catch (err) {
     throw new HttpsCallError(method, err, data);

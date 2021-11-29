@@ -8,6 +8,7 @@ import {
   getDocFromServer,
   onSnapshot,
 } from 'firebase/firestore';
+import { AnyConverter } from '../shared';
 
 export class FirestoreUpdatedEvent extends CustomEvent<{
   collection: string;
@@ -37,7 +38,7 @@ export class FirestoreHelper {
     temporary?: boolean,
   ): Promise<T | undefined> {
     const docInfo = this.listenerMap.get(p) || {};
-    const docRef = doc(this.firestore, p);
+    const docRef = doc(this.firestore, p).withConverter<T>(AnyConverter);
 
     if (!docInfo.listener) {
       docInfo.temporary = temporary;
@@ -47,7 +48,7 @@ export class FirestoreHelper {
         docInfo.unsubscribe = onSnapshot(docRef, {
           next: ds => {
             const oldData = value.data;
-            const newData = ds.data() as T;
+            const newData = ds.data();
 
             value.data = newData;
             resolve(value);
@@ -87,30 +88,30 @@ export class FirestoreHelper {
   }
 
   async getCacheFirst<T>(p: string): Promise<T | undefined> {
-    const docRef = doc(this.firestore, p);
+    const docRef = doc(this.firestore, p).withConverter<T>(AnyConverter);
     {
       const v = await getCache(docRef);
       if (v) {
-        return v as T;
+        return v;
       }
     }
 
     const d = await getDocFromServer(docRef);
-    return d.data() as T | undefined;
+    return d.data();
   }
 
   async get<T>(p: string): Promise<T | undefined> {
-    const docRef = doc(this.firestore, p);
+    const docRef = doc(this.firestore, p).withConverter<T>(AnyConverter);
     const d = await getDocFromServer(docRef);
-    return d.data() as T | undefined;
+    return d.data();
   }
 }
 
-const getCache = async <T>(docRef: DocumentReference): Promise<T | undefined> => {
+const getCache = async <T>(docRef: DocumentReference<T>): Promise<T | undefined> => {
   try {
     const doc = await getDocFromCache(docRef);
     if (doc.exists()) {
-      return doc.data() as T;
+      return doc.data();
     }
   } catch (err) {
     if (err instanceof FirestoreError && err.code == 'unavailable') {
