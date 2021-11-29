@@ -1,5 +1,5 @@
 import nacl from 'tweetnacl';
-import { AppError, assertIsDefined, bs62, MASTER_KEY_BYTES, Room } from '../../shared';
+import { AppError, assertIsDefined, bs62, Room } from '../../shared';
 import { AppFirebase } from './firebase';
 import { AppMsg } from './msg';
 
@@ -11,7 +11,7 @@ const BUILD_INFO = {
 
 interface RoomInfo {
   name: string;
-  masterKey: string;
+  signKey: string;
   adminKey?: string;
 }
 type MyRooms = Record<string, RoomInfo>;
@@ -99,23 +99,24 @@ export class App {
   }
 
   async createRoom(name: string) {
-    const masterKey = bs62.encode(nacl.randomBytes(MASTER_KEY_BYTES));
-    const adminKeysB = nacl.box.keyPair();
-    const adminKeys = {
-      secKey: bs62.encode(adminKeysB.secretKey),
-      pubKey: bs62.encode(adminKeysB.publicKey),
-    };
+    const signKeys = genSignKey();
+    const adminKeys = genSignKey();
 
     const result = await this.appFirebase.createRoom({
       method: 'CreateRoom',
       name,
+      signKey: signKeys.pubKey,
       adminKey: adminKeys.pubKey,
     });
 
     const id = result.id;
     assertIsDefined(id);
 
-    roomsMan.add(id, { name, masterKey, adminKey: adminKeys.secKey });
+    roomsMan.add(id, {
+      name,
+      signKey: signKeys.secKey,
+      adminKey: adminKeys.secKey,
+    });
   }
 
   async loadRooms() {
@@ -139,3 +140,11 @@ export class App {
     return this.appFirebase.getRoom(id);
   }
 }
+
+const genSignKey = () => {
+  const kp = nacl.sign.keyPair();
+  return {
+    secKey: bs62.encode(kp.secretKey),
+    pubKey: bs62.encode(kp.publicKey),
+  };
+};

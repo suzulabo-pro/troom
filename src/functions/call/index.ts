@@ -1,5 +1,6 @@
-import { BaseError, CreateRoomParams } from '../../shared';
+import { BaseError } from '../../shared';
 import { CallableContext, FirebaseAdminApp } from '../firebase';
+import { validators } from '../json-schema';
 import { logger } from '../utils/logger';
 import { createRoom } from './create-room';
 
@@ -26,10 +27,11 @@ export const httpsCallHandler = async (
     logger.debug('invoke', { method });
     switch (method) {
       case 'CreateRoom':
-        return createRoom(data as CreateRoomParams, context, adminApp);
+        if (validators.CreateRoomParams(data)) {
+          return createRoom(data, context, adminApp);
+        }
     }
   } catch (err) {
-    console.log(err);
     throw new HttpsCallError(method, err, data);
   }
 

@@ -10,7 +10,8 @@ type Blob = {
 
 export interface Room {
   name: string;
-  adminKey: string;
+  signKey: Blob;
+  adminKey: Blob;
   msgs: {
     fp: Blob;
     k: Blob;
@@ -25,9 +26,19 @@ export interface Room {
 export interface CreateRoomParams {
   method: 'CreateRoom';
   name: string;
+  signKey: string;
   adminKey: string;
 }
 
 export interface CreateRoomResult {
   id: string;
+}
+
+export interface PutRoomMsgParams {
+  method: 'PutRoomMsg';
+  id: string;
+  fp: Uint8Array;
+  k: Uint8Array;
+  author: string;
+  body: Uint8Array;
 }

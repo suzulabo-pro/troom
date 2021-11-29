@@ -107,6 +107,7 @@ const renderRooms = (ctx: RenderContext) => {
               return (
                 <a {...href(`/${v.id}`)} class="card">
                   {v.name}
+                  {!v.room && <div>missing</div>}
                 </a>
               );
             })}
