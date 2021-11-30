@@ -1,5 +1,5 @@
 import nacl from 'tweetnacl';
-import { AppError, assertIsDefined, bs62 } from '../../shared';
+import { AppError, assertIsDefined, bs62, ROOM_MSG_KEY_BYTES } from '../../shared';
 import { Room } from '../../shared-web';
 import { AppFirebase } from './firebase';
 import { AppMsg } from './msg';
@@ -13,6 +13,7 @@ const BUILD_INFO = {
 interface RoomInfo {
   name: string;
   signKey: string;
+  fp: string;
   adminKey?: string;
 }
 type MyRooms = Record<string, RoomInfo>;
@@ -113,8 +114,11 @@ export class App {
     const id = result.id;
     assertIsDefined(id);
 
+    const fp = bs62.encode(nacl.randomBytes(nacl.sign.secretKeyLength));
+
     roomsMan.add(id, {
       name,
+      fp,
       signKey: signKeys.secKey,
       adminKey: adminKeys.secKey,
     });
@@ -140,12 +144,59 @@ export class App {
   async getRoom(id: string) {
     return this.appFirebase.getRoom(id);
   }
+
+  async putRoomMsg(id: string, author: string, bodyS: string) {
+    const roomInfo = roomsMan.get()[id];
+    if (!roomInfo) {
+      console.warn('not my room', id);
+      return;
+    }
+
+    const signKey = bs62.decode(roomInfo.signKey);
+    const fp = nacl.sign.keyPair.fromSecretKey(bs62.decode(roomInfo.fp)).publicKey;
+    const k = nacl.randomBytes(ROOM_MSG_KEY_BYTES);
+    const key = deriveMsgKey(signKey, fp, k);
+    const body = nacl.secretbox(new TextEncoder().encode(bodyS), key.nonce, key.key);
+    const sign = nacl.sign.detached(concatArray(k, body), signKey);
+
+    await this.appFirebase.putRoomMsg({
+      method: 'PutRoomMsg',
+      id,
+      fp: bs62.encode(fp),
+      k: bs62.encode(k),
+      author,
+      body: bs62.encode(body),
+      sign: bs62.encode(sign),
+    });
+  }
 }
+
+const concatArray = (...arrays: Uint8Array[]) => {
+  const len = arrays.reduce((acc, array) => {
+    return acc + array.byteLength;
+  }, 0);
+  const result = new Uint8Array(len);
+  let offset = 0;
+  for (const array of arrays) {
+    result.set(array, offset);
+    offset += array.byteLength;
+  }
+  return result;
+};
 
 const genSignKey = () => {
   const kp = nacl.sign.keyPair();
   return {
     secKey: bs62.encode(kp.secretKey),
     pubKey: bs62.encode(kp.publicKey),
+  };
+};
+
+const deriveMsgKey = (signKey: Uint8Array, fp: Uint8Array, k: Uint8Array) => {
+  const x = concatArray(signKey, fp, k);
+  const h = nacl.hash(x);
+  return {
+    key: h.slice(0, nacl.secretbox.keyLength),
+    nonce: h.slice(nacl.secretbox.nonceLength * -1),
   };
 };

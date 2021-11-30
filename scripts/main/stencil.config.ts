@@ -38,24 +38,17 @@ const buildRepo = () => {
   return 'local build';
 };
 
-const isCapacitor = process.env['CAP_BUILD'] != null;
-if (isCapacitor) {
-  console.log('Capacitor Build');
-}
-
 const isDev = process.argv.includes('--dev');
 
-const outputTargetWww: OutputTargetWww = isCapacitor
-  ? { type: 'www', dir: `${ROOT_DIR}/dist/main/cap`, serviceWorker: null }
-  : {
-      type: 'www',
-      serviceWorker: {
-        swSrc: `${ROOT_DIR}/src/main/sw.js`,
-        globPatterns: isDev ? ['index.html'] : ['**/*.{js,html}'],
-      },
-      dir: isDev ? `${ROOT_DIR}/dist/main/www` : `${ROOT_DIR}/dist/main/www-dist`,
-      copy: [],
-    };
+const outputTargetWww: OutputTargetWww = {
+  type: 'www',
+  serviceWorker: {
+    swSrc: `${ROOT_DIR}/src/main/sw.js`,
+    globPatterns: isDev ? ['index.html'] : ['**/*.{js,html}'],
+  },
+  dir: isDev ? `${ROOT_DIR}/dist/main/www` : `${ROOT_DIR}/dist/main/www-dist`,
+  copy: [],
+};
 
 export const config: Config = {
   globalScript: `${ROOT_DIR}/src/main/global/app.ts`,

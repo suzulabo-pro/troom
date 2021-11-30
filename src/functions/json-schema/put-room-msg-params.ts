@@ -6,8 +6,8 @@ import {
   ROOM_FP_MAX_LENGTH,
   ROOM_FP_MIN_LENGTH,
   ROOM_ID_LENGTH,
-  ROOM_KEY_MAX_LENGTH,
-  ROOM_KEY_MIN_LENGTH,
+  ROOM_MSG_KEY_MAX_LENGTH,
+  ROOM_MSG_KEY_MIN_LENGTH,
   ROOM_SIGN_MAX_LENGTH,
   ROOM_SIGN_MIN_LENGTH,
 } from '../../shared';
@@ -33,8 +33,8 @@ export const PutRoomMsgParamsSchema: JSONSchemaType<PutRoomMsgParams> = {
     },
     k: {
       type: 'string',
-      minLength: ROOM_KEY_MIN_LENGTH,
-      maxLength: ROOM_KEY_MAX_LENGTH,
+      minLength: ROOM_MSG_KEY_MIN_LENGTH,
+      maxLength: ROOM_MSG_KEY_MAX_LENGTH,
     },
     author: {
       type: 'string',

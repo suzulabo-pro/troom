@@ -6,7 +6,7 @@ import {
   CallableContext,
   FirebaseAdminApp,
   getFirestore,
-  serverTimestamp,
+  Timestamp,
 } from '../firebase';
 import { logger } from '../utils/logger';
 
@@ -42,16 +42,17 @@ export const putRoomMsg = async (
 
   const fp = bs62.decode(_fp);
 
+  const now = Timestamp.now();
   const newMsg: RoomMsgW = {
     fp,
     k,
     author,
     body,
-    cT: serverTimestamp(),
+    cT: now,
   };
   const updateData: Partial<RoomW> = {
     msgs: arrayUnion(newMsg),
-    uT: serverTimestamp(),
+    uT: now,
   };
   await docRef.update(updateData);
 };

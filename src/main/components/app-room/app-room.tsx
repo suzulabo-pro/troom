@@ -4,6 +4,13 @@ import { assertIsDefined } from '../../../shared';
 import { PromiseState, redirectRoute, setDocumentTitle } from '../../../shared-web';
 import { App } from '../../app/app';
 
+const initValues = () => {
+  return {
+    author: '',
+    msg: '',
+  };
+};
+
 @Component({
   tag: 'app-room',
   styleUrl: 'app-room.scss',
@@ -19,7 +26,7 @@ export class AppRoom {
   roomID!: string;
 
   @State()
-  values?: { msg: string };
+  values = initValues();
 
   @State()
   dataState?: PromiseState<AsyncReturnType<AppRoom['loadData']>>;
@@ -43,8 +50,16 @@ export class AppRoom {
   }
 
   private handlers = {
+    inputAuthor: (ev: Event) => {
+      this.values = { ...this.values, author: (ev.target as HTMLTextAreaElement).value };
+    },
     inputMsg: (ev: Event) => {
       this.values = { ...this.values, msg: (ev.target as HTMLTextAreaElement).value };
+    },
+    submit: async () => {
+      await this.app.processLoading(async () => {
+        await this.app.putRoomMsg(this.roomID, this.values.author, this.values.msg);
+      });
     },
   };
 
@@ -52,12 +67,14 @@ export class AppRoom {
     const dataStatus = this.dataState?.status();
     assertIsDefined(dataStatus);
 
+    const canSubmit = !!this.values.author && !!this.values.msg;
+
     return {
       msgs: this.app.msgs,
       handlers: this.handlers,
       values: this.values,
+      canSubmit,
       dataStatus,
-      id: this.roomID,
     };
   }
 
@@ -99,10 +116,11 @@ const renderMessages = (ctx: RenderContext) => {
             })}
           </div>
           <div class="form">
+            <input class="author" onInput={ctx.handlers.inputAuthor} value={ctx.values.author} />
             <textarea class="msg" onInput={ctx.handlers.inputMsg}>
               {ctx.values?.msg}
             </textarea>
-            <button class="icon submit">
+            <button class="icon submit" disabled={!ctx.canSubmit} onClick={ctx.handlers.submit}>
               <ap-icon icon="plus" />
             </button>
           </div>
