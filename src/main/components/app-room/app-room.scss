@@ -1,10 +1,47 @@
 app-room {
-  position: relative;
-
   button.show-form {
-    position: absolute;
+    position: fixed;
     right: 10px;
-    bottom: 10px;
+    bottom: 30px;
+    background-color: var(--light-bk-color);
+    border-radius: 50px;
+  }
+
+  .name {
+    padding: 20px 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.3em;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .msgs {
+    .msg {
+      margin: 15px 10px 10px;
+
+      border-bottom: 1px dotted var(--light-border-color);
+      padding-bottom: 15px;
+
+      .head {
+        display: flex;
+        .author {
+          font-weight: bold;
+        }
+        .date {
+          margin-left: auto;
+          color: var(--light-color);
+          font-size: 0.9em;
+        }
+      }
+      .body {
+        padding: 10px 5px 0;
+      }
+      .fp {
+        text-align: right;
+        color: var(--light-color);
+        font-size: 0.9em;
+      }
+    }
   }
 
   --modal-content-margin: 20px auto auto;

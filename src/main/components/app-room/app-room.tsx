@@ -149,13 +149,24 @@ const renderMessages = (ctx: RenderContext) => {
       return (
         <Fragment>
           <div class="name">{value.room.name}</div>
-          <div class="rooms">
+          <div class="msgs">
             {msgs.map(v => {
               const msg = ctx.decryptMsg(v);
+              if (!msg) {
+                // TODO
+                return;
+              }
 
               return (
-                <div>
-                  {v.author}/{msg?.body}
+                <div class="msg">
+                  <div class="head">
+                    <span class="author">{msg.author}</span>
+                    <span class="date">{ctx.msgs.common.datetime(msg.cT.toMillis())}</span>
+                  </div>
+                  <div class="body">
+                    <ap-textview text={msg.body} />
+                  </div>
+                  <div class="fp">{msg.fp}</div>
                 </div>
               );
             })}

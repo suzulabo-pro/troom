@@ -42,7 +42,7 @@ ap-root {
       display: flex;
       align-items: center;
 
-      padding: 10px 40px 10px max(20px, env(safe-area-inset-left));
+      padding: 10px 40px 10px max(10px, env(safe-area-inset-left));
 
       @include media-mobile-mode() {
         padding-bottom: max(10px, env(safe-area-inset-bottom));

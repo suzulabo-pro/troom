@@ -1,5 +1,11 @@
 import nacl from 'tweetnacl';
-import { AppError, assertIsDefined, bs62, ROOM_MSG_KEY_BYTES } from '../../shared';
+import {
+  AppError,
+  assertIsDefined,
+  bs62,
+  ROOM_MSG_FP_DISP_LENGTH,
+  ROOM_MSG_KEY_BYTES,
+} from '../../shared';
 import { Room } from '../../shared-web';
 import { AppFirebase } from './firebase';
 import { AppMsg } from './msg';
@@ -202,6 +208,7 @@ export class App {
     return {
       ...msg,
       body: !b ? '(decrypt error)' : new TextDecoder().decode(b?.buffer),
+      fp: bs62.encode(msg.fp.toUint8Array()).slice(0, ROOM_MSG_FP_DISP_LENGTH),
     };
   }
 }
