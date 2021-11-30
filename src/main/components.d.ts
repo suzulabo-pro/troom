@@ -27,6 +27,7 @@ export namespace Components {
         "srcPromise"?: PromiseState<string>;
     }
     interface ApInput {
+        "autoFocus"?: boolean;
         "label"?: string;
         "maxLength"?: number;
         "textarea"?: boolean;
@@ -174,6 +175,7 @@ declare namespace LocalJSX {
         "srcPromise"?: PromiseState<string>;
     }
     interface ApInput {
+        "autoFocus"?: boolean;
         "label"?: string;
         "maxLength"?: number;
         "textarea"?: boolean;

@@ -1,0 +1,25 @@
+app-room {
+  position: relative;
+
+  button.show-form {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+  }
+
+  --modal-content-margin: 20px auto auto;
+  .form-modal {
+    padding: 5px;
+    ap-input.body {
+      margin-top: 5px;
+    }
+    .buttons {
+      margin-top: 10px;
+      display: flex;
+
+      button.cancel {
+        margin: 0 5px 0 auto;
+      }
+    }
+  }
+}

@@ -17,6 +17,9 @@ export class ApInput {
   @Prop()
   textarea?: boolean;
 
+  @Prop()
+  autoFocus?: boolean;
+
   private autoGrow = (() => {
     let el: HTMLTextAreaElement;
     const handleRef = (_el: HTMLTextAreaElement | undefined) => {
@@ -50,11 +53,14 @@ export class ApInput {
               </span>
             )}
           </div>
-          {!this.textarea && <input value={this.value} maxLength={this.maxLength} />}
+          {!this.textarea && (
+            <input value={this.value} maxLength={this.maxLength} autoFocus={this.autoFocus} />
+          )}
           {this.textarea && (
             <textarea
               value={this.value}
               maxLength={this.maxLength}
+              autoFocus={this.autoFocus}
               ref={this.autoGrow.handleRef}
             ></textarea>
           )}

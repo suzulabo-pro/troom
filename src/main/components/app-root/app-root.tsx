@@ -14,7 +14,6 @@ const matches: RouteMatch[] = [
     pattern: new RegExp(`^[0-9A-Z]{${ROOM_ID_LENGTH}}$`),
     name: 'roomID',
     tag: 'app-room',
-    back: '/',
   },
 ];
 

@@ -15,6 +15,7 @@ interface RoomInfo {
   signKey: string;
   fp: string;
   adminKey?: string;
+  author?: string;
 }
 type MyRooms = Record<string, RoomInfo>;
 
@@ -35,8 +36,16 @@ class RoomsManager {
   updateName(id: string, name: string) {
     const rooms = this.get();
     const info = rooms[id];
-    if (info) {
+    if (info && info.name != name) {
       info.name = name;
+      this.set(rooms);
+    }
+  }
+  updateAuthor(id: string, author: string) {
+    const rooms = this.get();
+    const info = rooms[id];
+    if (info && info.author != author) {
+      info.author = author;
       this.set(rooms);
     }
   }
@@ -98,6 +107,10 @@ export class App {
 
   isMyRoom(id: string) {
     return id in roomsMan.get();
+  }
+
+  getAuthor(id: string) {
+    return roomsMan.get()[id]?.author;
   }
 
   async createRoom(name: string) {
@@ -168,6 +181,8 @@ export class App {
       body: bs62.encode(body),
       sign: bs62.encode(sign),
     });
+
+    roomsMan.updateAuthor(id, author);
   }
 
   decryptMsg(id: string, msg: Room['msgs'][number]) {

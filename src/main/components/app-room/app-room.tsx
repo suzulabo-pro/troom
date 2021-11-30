@@ -1,15 +1,8 @@
 import { Component, Fragment, h, Host, Prop, State } from '@stencil/core';
 import { AsyncReturnType } from 'type-fest';
-import { assertIsDefined } from '../../../shared';
+import { assertIsDefined, AUTHOR_MAX_LENGTH, BODY_TEXT_MAX_LENGTH } from '../../../shared';
 import { PromiseState, redirectRoute, setDocumentTitle } from '../../../shared-web';
 import { App } from '../../app/app';
-
-const initValues = () => {
-  return {
-    author: '',
-    msg: '',
-  };
-};
 
 @Component({
   tag: 'app-room',
@@ -26,7 +19,10 @@ export class AppRoom {
   roomID!: string;
 
   @State()
-  values = initValues();
+  showForm = false;
+
+  @State()
+  values = this.defaultValues();
 
   @State()
   dataState?: PromiseState<AsyncReturnType<AppRoom['loadData']>>;
@@ -50,6 +46,15 @@ export class AppRoom {
   }
 
   private handlers = {
+    showFormClick: () => {
+      console.log('showFormClick');
+      this.showForm = true;
+      this.formFocus = this.values.author ? 'body' : 'author';
+    },
+    formClose: () => {
+      console.log('formClose');
+      this.showForm = false;
+    },
     inputAuthor: (ev: Event) => {
       this.values = { ...this.values, author: (ev.target as HTMLTextAreaElement).value };
     },
@@ -59,6 +64,8 @@ export class AppRoom {
     submit: async () => {
       await this.app.processLoading(async () => {
         await this.app.putRoomMsg(this.roomID, this.values.author, this.values.msg);
+        this.showForm = false;
+        this.values = this.defaultValues();
       });
     },
   };
@@ -73,6 +80,7 @@ export class AppRoom {
       msgs: this.app.msgs,
       handlers: this.handlers,
       values: this.values,
+      showForm: this.showForm,
       canSubmit,
       dataStatus,
       decryptMsg: (msg: Parameters<App['decryptMsg']>[1]) => {
@@ -92,12 +100,40 @@ export class AppRoom {
 
     return render(this.renderContext());
   }
+
+  private formFocus?: string;
+
+  componentDidRender() {
+    if (this.formFocus) {
+      document
+        .querySelector(`app-room ap-input.${this.formFocus}`)
+        ?.querySelector<HTMLInputElement>('input,textarea')
+        ?.focus();
+      this.formFocus = undefined;
+    }
+  }
+
+  private defaultValues() {
+    const author = this.app.getAuthor(this.roomID) || '';
+    return {
+      author,
+      msg: '',
+    };
+  }
 }
 
 type RenderContext = ReturnType<AppRoom['renderContext']>;
 
 const render = (ctx: RenderContext) => {
-  return <Host>{renderMessages(ctx)}</Host>;
+  return (
+    <Host>
+      {renderMessages(ctx)}
+      {renderForm(ctx)}
+      <button class="show-form icon" onClick={ctx.handlers.showFormClick}>
+        <ap-icon icon="pencil" />
+      </button>
+    </Host>
+  );
 };
 
 const renderMessages = (ctx: RenderContext) => {
@@ -124,19 +160,45 @@ const renderMessages = (ctx: RenderContext) => {
               );
             })}
           </div>
-          <div class="form">
-            <input class="author" onInput={ctx.handlers.inputAuthor} value={ctx.values.author} />
-            <textarea class="msg" onInput={ctx.handlers.inputMsg}>
-              {ctx.values?.msg}
-            </textarea>
-            <button class="icon submit" disabled={!ctx.canSubmit} onClick={ctx.handlers.submit}>
-              <ap-icon icon="plus" />
-            </button>
-          </div>
         </Fragment>
       );
     }
     default:
       return <ap-spinner />;
+  }
+};
+
+const renderForm = (ctx: RenderContext) => {
+  if (ctx.showForm) {
+    return (
+      <ap-modal onClose={ctx.handlers.formClose}>
+        <div class="form-modal">
+          <ap-input
+            class="author"
+            label={ctx.msgs.room.form.author}
+            maxLength={AUTHOR_MAX_LENGTH}
+            onInput={ctx.handlers.inputAuthor}
+            value={ctx.values.author}
+            autoFocus={true}
+          />
+          <ap-input
+            class="body"
+            textarea={true}
+            label={ctx.msgs.room.form.body}
+            maxLength={BODY_TEXT_MAX_LENGTH}
+            onInput={ctx.handlers.inputMsg}
+            value={ctx.values.msg}
+          />
+          <div class="buttons">
+            <button onClick={ctx.handlers.formClose} class="clear cancel">
+              {ctx.msgs.common.cancel}
+            </button>
+            <button onClick={ctx.handlers.submit} class="submit" disabled={!ctx.canSubmit}>
+              {ctx.msgs.room.form.submit}
+            </button>
+          </div>
+        </div>
+      </ap-modal>
+    );
   }
 };

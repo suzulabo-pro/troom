@@ -17,6 +17,6 @@ ap-modal {
     border-radius: 5px;
     flex-grow: 1;
     max-width: min(var(--modal-max-width, 400px), 100%);
-    margin: auto;
+    margin: var(--modal-content-margin, auto);
   }
 }
