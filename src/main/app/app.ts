@@ -169,6 +169,26 @@ export class App {
       sign: bs62.encode(sign),
     });
   }
+
+  decryptMsg(id: string, msg: Room['msgs'][number]) {
+    const roomInfo = roomsMan.get()[id];
+    if (!roomInfo) {
+      console.warn('not my room', id);
+      return;
+    }
+
+    const key = deriveMsgKey(
+      bs62.decode(roomInfo.signKey),
+      msg.fp.toUint8Array(),
+      msg.k.toUint8Array(),
+    );
+
+    const b = nacl.secretbox.open(msg.body.toUint8Array(), key.nonce, key.key);
+    return {
+      ...msg,
+      body: !b ? '(decrypt error)' : new TextDecoder().decode(b?.buffer),
+    };
+  }
 }
 
 const concatArray = (...arrays: Uint8Array[]) => {

@@ -75,6 +75,9 @@ export class AppRoom {
       values: this.values,
       canSubmit,
       dataStatus,
+      decryptMsg: (msg: Parameters<App['decryptMsg']>[1]) => {
+        return this.app.decryptMsg(this.roomID, msg);
+      },
     };
   }
 
@@ -112,7 +115,13 @@ const renderMessages = (ctx: RenderContext) => {
           <div class="name">{value.room.name}</div>
           <div class="rooms">
             {msgs.map(v => {
-              return <div>{v.author}</div>;
+              const msg = ctx.decryptMsg(v);
+
+              return (
+                <div>
+                  {v.author}/{msg?.body}
+                </div>
+              );
             })}
           </div>
           <div class="form">
