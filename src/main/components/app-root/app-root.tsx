@@ -15,6 +15,13 @@ const matches: RouteMatch[] = [
     name: 'roomID',
     tag: 'app-room',
     back: '/',
+    nexts: [
+      {
+        pattern: 'admin',
+        tag: 'app-room-admin',
+        back: p => `/${p['roomID']}`,
+      },
+    ],
   },
 ];
 

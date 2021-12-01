@@ -24,7 +24,8 @@ export interface Msgs {
   };
   room: {
     pageTitle: (s: string) => string;
-    post: string;
+    adminPage: string;
+    postBtn: string;
     form: {
       author: string;
       body: string;

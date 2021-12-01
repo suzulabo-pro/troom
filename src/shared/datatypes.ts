@@ -5,6 +5,7 @@ export interface _Room<Timestamp, Blob> {
   name: string;
   signKey: Blob;
   adminKey: Blob;
+  invite?: { code: Blob; uT: Timestamp };
   msgs: {
     fp: Blob;
     k: Blob;
@@ -34,5 +35,12 @@ export interface PutRoomMsgParams {
   k: string;
   author: string;
   body: string;
+  sign: string;
+}
+
+export interface PutInviteCodeParams {
+  method: 'PutInviteCode';
+  id: string;
+  code: string;
   sign: string;
 }

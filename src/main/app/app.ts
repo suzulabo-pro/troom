@@ -115,6 +115,10 @@ export class App {
     return id in roomsMan.get();
   }
 
+  isAdmin(id: string) {
+    return !!roomsMan.get()[id]?.adminKey;
+  }
+
   getAuthor(id: string) {
     return roomsMan.get()[id]?.author;
   }

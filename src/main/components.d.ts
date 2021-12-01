@@ -59,6 +59,11 @@ export namespace Components {
         "app": App;
         "roomID": string;
     }
+    interface AppRoomAdmin {
+        "activePage": boolean;
+        "app": App;
+        "roomID": string;
+    }
     interface AppRoot {
     }
 }
@@ -135,6 +140,12 @@ declare global {
         prototype: HTMLAppRoomElement;
         new (): HTMLAppRoomElement;
     };
+    interface HTMLAppRoomAdminElement extends Components.AppRoomAdmin, HTMLStencilElement {
+    }
+    var HTMLAppRoomAdminElement: {
+        prototype: HTMLAppRoomAdminElement;
+        new (): HTMLAppRoomAdminElement;
+    };
     interface HTMLAppRootElement extends Components.AppRoot, HTMLStencilElement {
     }
     var HTMLAppRootElement: {
@@ -154,6 +165,7 @@ declare global {
         "ap-textview": HTMLApTextviewElement;
         "app-home": HTMLAppHomeElement;
         "app-room": HTMLAppRoomElement;
+        "app-room-admin": HTMLAppRoomAdminElement;
         "app-root": HTMLAppRootElement;
     }
 }
@@ -208,6 +220,11 @@ declare namespace LocalJSX {
         "app": App;
         "roomID": string;
     }
+    interface AppRoomAdmin {
+        "activePage": boolean;
+        "app": App;
+        "roomID": string;
+    }
     interface AppRoot {
     }
     interface IntrinsicElements {
@@ -223,6 +240,7 @@ declare namespace LocalJSX {
         "ap-textview": ApTextview;
         "app-home": AppHome;
         "app-room": AppRoom;
+        "app-room-admin": AppRoomAdmin;
         "app-root": AppRoot;
     }
 }
@@ -242,6 +260,7 @@ declare module "@stencil/core" {
             "ap-textview": LocalJSX.ApTextview & JSXBase.HTMLAttributes<HTMLApTextviewElement>;
             "app-home": LocalJSX.AppHome & JSXBase.HTMLAttributes<HTMLAppHomeElement>;
             "app-room": LocalJSX.AppRoom & JSXBase.HTMLAttributes<HTMLAppRoomElement>;
+            "app-room-admin": LocalJSX.AppRoomAdmin & JSXBase.HTMLAttributes<HTMLAppRoomAdminElement>;
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
         }
     }

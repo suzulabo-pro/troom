@@ -6,6 +6,7 @@ import {
   redirectRoute,
   setDocumentTitle,
   setHeaderButtons,
+  href,
 } from '../../../shared-web';
 import { App } from '../../app/app';
 
@@ -24,10 +25,10 @@ export class AppRoom {
   roomID!: string;
 
   @State()
-  showForm = false;
+  showPostModal = false;
 
   @State()
-  values = this.defaultValues();
+  postValues = this.defaultPostValues();
 
   @State()
   dataState?: PromiseState<AsyncReturnType<AppRoom['loadData']>>;
@@ -51,26 +52,24 @@ export class AppRoom {
   }
 
   private handlers = {
-    showFormClick: () => {
-      console.log('showFormClick');
-      this.showForm = true;
-      this.formFocus = this.values.author ? 'body' : 'author';
+    showPostModalClick: () => {
+      this.showPostModal = true;
+      this.formFocus = this.postValues.author ? 'body' : 'author';
     },
-    formClose: () => {
-      console.log('formClose');
-      this.showForm = false;
+    postModalClose: () => {
+      this.showPostModal = false;
     },
-    inputAuthor: (ev: Event) => {
-      this.values = { ...this.values, author: (ev.target as HTMLTextAreaElement).value };
+    inputPostAuthor: (ev: Event) => {
+      this.postValues = { ...this.postValues, author: (ev.target as HTMLTextAreaElement).value };
     },
-    inputMsg: (ev: Event) => {
-      this.values = { ...this.values, msg: (ev.target as HTMLTextAreaElement).value };
+    inputPostMsg: (ev: Event) => {
+      this.postValues = { ...this.postValues, msg: (ev.target as HTMLTextAreaElement).value };
     },
-    submit: async () => {
+    postSubmit: async () => {
       await this.app.processLoading(async () => {
-        await this.app.putRoomMsg(this.roomID, this.values.author, this.values.msg);
-        this.showForm = false;
-        this.values = this.defaultValues();
+        await this.app.putRoomMsg(this.roomID, this.postValues.author, this.postValues.msg);
+        this.showPostModal = false;
+        this.postValues = this.defaultPostValues();
       });
     },
   };
@@ -79,27 +78,22 @@ export class AppRoom {
     const dataStatus = this.dataState?.status();
     assertIsDefined(dataStatus);
 
-    const canSubmit = !!this.values.author && !!this.values.msg;
+    const canPostSubmit = !!this.postValues.author && !!this.postValues.msg;
 
     return {
+      roomID: this.roomID,
       msgs: this.app.msgs,
       handlers: this.handlers,
-      values: this.values,
-      showForm: this.showForm,
-      canSubmit,
+      postValues: this.postValues,
+      showPostModal: this.showPostModal,
+      isAdmin: this.app.isAdmin(this.roomID),
+      canPostSubmit,
       dataStatus,
       decryptMsg: (msg: Parameters<App['decryptMsg']>[1]) => {
         return this.app.decryptMsg(this.roomID, msg);
       },
     };
   }
-
-  private headerButtons = [
-    {
-      label: this.app.msgs.room.post,
-      handler: this.handlers.showFormClick,
-    },
-  ];
 
   render() {
     if (this.activePage) {
@@ -108,7 +102,15 @@ export class AppRoom {
         ? this.app.msgs.room.pageTitle(room.name)
         : this.app.msgs.common.pageTitle;
       setDocumentTitle(docTitle);
-      setHeaderButtons(this.headerButtons);
+
+      const headerButtons = [
+        {
+          label: this.app.msgs.room.postBtn,
+          handler: this.handlers.showPostModalClick,
+        },
+      ];
+
+      setHeaderButtons(headerButtons);
     }
 
     return render(this.renderContext());
@@ -126,7 +128,7 @@ export class AppRoom {
     }
   }
 
-  private defaultValues() {
+  private defaultPostValues() {
     const author = this.app.getAuthor(this.roomID) || '';
     return {
       author,
@@ -141,7 +143,12 @@ const render = (ctx: RenderContext) => {
   return (
     <Host>
       {renderMessages(ctx)}
-      {renderForm(ctx)}
+      {renderPostModal(ctx)}
+      {ctx.isAdmin && (
+        <div class="admin">
+          <a {...href(`/${ctx.roomID}/admin`)}>{ctx.msgs.room.adminPage}</a>
+        </div>
+      )}
     </Host>
   );
 };
@@ -189,17 +196,17 @@ const renderMessages = (ctx: RenderContext) => {
   }
 };
 
-const renderForm = (ctx: RenderContext) => {
-  if (ctx.showForm) {
+const renderPostModal = (ctx: RenderContext) => {
+  if (ctx.showPostModal) {
     return (
-      <ap-modal onClose={ctx.handlers.formClose}>
+      <ap-modal onClose={ctx.handlers.postModalClose}>
         <div class="form-modal">
           <ap-input
             class="author"
             label={ctx.msgs.room.form.author}
             maxLength={AUTHOR_MAX_LENGTH}
-            onInput={ctx.handlers.inputAuthor}
-            value={ctx.values.author}
+            onInput={ctx.handlers.inputPostAuthor}
+            value={ctx.postValues.author}
             autoFocus={true}
           />
           <ap-input
@@ -207,14 +214,14 @@ const renderForm = (ctx: RenderContext) => {
             textarea={true}
             label={ctx.msgs.room.form.body}
             maxLength={BODY_TEXT_MAX_LENGTH}
-            onInput={ctx.handlers.inputMsg}
-            value={ctx.values.msg}
+            onInput={ctx.handlers.inputPostMsg}
+            value={ctx.postValues.msg}
           />
           <div class="buttons">
-            <button onClick={ctx.handlers.formClose} class="clear cancel">
+            <button onClick={ctx.handlers.postModalClose} class="clear cancel">
               {ctx.msgs.common.cancel}
             </button>
-            <button onClick={ctx.handlers.submit} class="submit" disabled={!ctx.canSubmit}>
+            <button onClick={ctx.handlers.postSubmit} class="submit" disabled={!ctx.canPostSubmit}>
               {ctx.msgs.room.form.submit}
             </button>
           </div>
