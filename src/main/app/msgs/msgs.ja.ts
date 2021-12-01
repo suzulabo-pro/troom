@@ -37,6 +37,7 @@ export const msgs: Msgs = {
   },
   room: {
     pageTitle: (s: string) => `${s} - ${titleSuffix}`,
+    post: '書き込み',
     form: {
       author: '名前',
       body: 'メッセージ',

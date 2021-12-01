@@ -1,12 +1,4 @@
 app-room {
-  button.show-form {
-    position: fixed;
-    right: 10px;
-    bottom: 30px;
-    background-color: var(--light-bk-color);
-    border-radius: 50px;
-  }
-
   .name {
     padding: 20px 10px;
     margin-bottom: 20px;
@@ -20,21 +12,21 @@ app-room {
       margin: 15px 10px 10px;
 
       border-bottom: 1px dotted var(--light-border-color);
-      padding-bottom: 15px;
+      padding-bottom: 10px;
 
       .head {
         display: flex;
+        font-size: 0.9em;
         .author {
           font-weight: bold;
         }
         .date {
           margin-left: auto;
           color: var(--light-color);
-          font-size: 0.9em;
         }
       }
       .body {
-        padding: 10px 5px 0;
+        margin-top: 10px;
       }
       .fp {
         text-align: right;

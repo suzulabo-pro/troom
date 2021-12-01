@@ -1,7 +1,12 @@
 import { Component, Fragment, h, Host, Prop, State } from '@stencil/core';
 import { AsyncReturnType } from 'type-fest';
 import { assertIsDefined, AUTHOR_MAX_LENGTH, BODY_TEXT_MAX_LENGTH } from '../../../shared';
-import { PromiseState, redirectRoute, setDocumentTitle } from '../../../shared-web';
+import {
+  PromiseState,
+  redirectRoute,
+  setDocumentTitle,
+  setHeaderButtons,
+} from '../../../shared-web';
 import { App } from '../../app/app';
 
 @Component({
@@ -89,6 +94,13 @@ export class AppRoom {
     };
   }
 
+  private headerButtons = [
+    {
+      label: this.app.msgs.room.post,
+      handler: this.handlers.showFormClick,
+    },
+  ];
+
   render() {
     if (this.activePage) {
       const { room } = this.dataState?.result() || {};
@@ -96,6 +108,7 @@ export class AppRoom {
         ? this.app.msgs.room.pageTitle(room.name)
         : this.app.msgs.common.pageTitle;
       setDocumentTitle(docTitle);
+      setHeaderButtons(this.headerButtons);
     }
 
     return render(this.renderContext());
@@ -129,9 +142,6 @@ const render = (ctx: RenderContext) => {
     <Host>
       {renderMessages(ctx)}
       {renderForm(ctx)}
-      <button class="show-form icon" onClick={ctx.handlers.showFormClick}>
-        <ap-icon icon="pencil" />
-      </button>
     </Host>
   );
 };
