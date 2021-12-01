@@ -45,4 +45,14 @@ export const msgs: Msgs = {
       submit: '送信',
     },
   },
+  roomAdmin: {
+    pageTitle: (s: string) => `${s} - 設定 - ${titleSuffix}`,
+    nameForm: {
+      roomName: 'ルーム名',
+      updateBtn: '更新する',
+    },
+    inviteForm: {
+      genURLBtn: '招待URLを発行する',
+    },
+  },
 };

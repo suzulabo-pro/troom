@@ -12,7 +12,13 @@ import {
   getFunctions,
   httpsCallable,
 } from 'firebase/functions';
-import { AppEnv, CreateRoomParams, CreateRoomResult, PutRoomMsgParams } from '../../shared';
+import {
+  AppEnv,
+  CreateRoomParams,
+  CreateRoomResult,
+  PutInviteCodeParams,
+  PutRoomMsgParams,
+} from '../../shared';
 import { FirestoreHelper, Room } from '../../shared-web';
 
 const devonly_setEmulator = (functions: Functions, firestore: Firestore) => {
@@ -64,6 +70,10 @@ export class AppFirebase {
 
   async putRoomMsg(params: PutRoomMsgParams) {
     return this.callFunc<PutRoomMsgParams, void>(params);
+  }
+
+  async putInviteCode(params: PutInviteCodeParams) {
+    return this.callFunc<PutInviteCodeParams, void>(params);
   }
 
   async getRoom(id: string, temporary?: boolean) {

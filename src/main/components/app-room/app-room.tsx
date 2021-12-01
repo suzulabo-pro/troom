@@ -60,7 +60,7 @@ export class AppRoom {
       this.showPostModal = false;
     },
     inputPostAuthor: (ev: Event) => {
-      this.postValues = { ...this.postValues, author: (ev.target as HTMLTextAreaElement).value };
+      this.postValues = { ...this.postValues, author: (ev.target as HTMLInputElement).value };
     },
     inputPostMsg: (ev: Event) => {
       this.postValues = { ...this.postValues, msg: (ev.target as HTMLTextAreaElement).value };

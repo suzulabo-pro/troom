@@ -1,0 +1,12 @@
+app-room-admin {
+  .name-form {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 15px;
+
+    button.submit {
+      display: inline-block;
+      margin: 20px auto;
+    }
+  }
+}

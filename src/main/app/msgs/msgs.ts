@@ -32,4 +32,14 @@ export interface Msgs {
       submit: string;
     };
   };
+  roomAdmin: {
+    pageTitle: (s: string) => string;
+    nameForm: {
+      roomName: string;
+      updateBtn: string;
+    };
+    inviteForm: {
+      genURLBtn: string;
+    };
+  };
 }

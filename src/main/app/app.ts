@@ -3,6 +3,7 @@ import {
   AppError,
   assertIsDefined,
   bs62,
+  INVITE_CODE_BYTES,
   ROOM_MSG_FP_DISP_LENGTH,
   ROOM_MSG_KEY_BYTES,
 } from '../../shared';
@@ -214,6 +215,43 @@ export class App {
       body: !b ? '(decrypt error)' : new TextDecoder().decode(b?.buffer),
       fp: bs62.encode(msg.fp.toUint8Array()).slice(0, ROOM_MSG_FP_DISP_LENGTH),
     };
+  }
+
+  async putInviteCode(id: string) {
+    const roomInfo = roomsMan.get()[id];
+    if (!roomInfo) {
+      console.warn('not my room', id);
+      return;
+    }
+    if (!roomInfo.adminKey) {
+      console.warn('not admin', id);
+      return;
+    }
+
+    const signKey = bs62.decode(roomInfo.signKey);
+    const adminKey = bs62.decode(roomInfo.adminKey);
+
+    const keyCode = nacl.randomBytes(INVITE_CODE_BYTES);
+    const h = nacl.hash(keyCode);
+    const key = {
+      key: h.slice(0, nacl.secretbox.keyLength),
+      nonce: h.slice(nacl.secretbox.nonceLength * -1),
+    };
+
+    const code = nacl.secretbox(signKey, key.nonce, key.key);
+    const sign = nacl.sign.detached(code, adminKey);
+
+    const code_bs62 = bs62.encode(code);
+    const sign_bs62 = bs62.encode(sign);
+
+    await this.appFirebase.putInviteCode({
+      method: 'PutInviteCode',
+      id,
+      code: code_bs62,
+      sign: sign_bs62,
+    });
+
+    return bs62.encode(keyCode);
   }
 }
 
