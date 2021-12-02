@@ -1,5 +1,11 @@
 import { Component, h, Host } from '@stencil/core';
-import { AppEnv, AppError, ROOM_ID_LENGTH } from '../../../shared';
+import {
+  AppEnv,
+  AppError,
+  INVITE_CODE_MAX_LENGTH,
+  INVITE_CODE_MIN_LENGTH,
+  ROOM_ID_LENGTH,
+} from '../../../shared';
 import { RouteMatch } from '../../../shared-web';
 import { App } from '../../app/app';
 import { AppFirebase } from '../../app/firebase';
@@ -20,6 +26,19 @@ const matches: RouteMatch[] = [
         pattern: 'admin',
         tag: 'app-room-admin',
         back: p => `/${p['roomID']}`,
+      },
+      {
+        pattern: 'join',
+        nexts: [
+          {
+            pattern: new RegExp(
+              `^[0-9A-Za-z]{${INVITE_CODE_MIN_LENGTH},${INVITE_CODE_MAX_LENGTH}}$`,
+            ),
+            name: 'inviteCode',
+            tag: 'app-room-join',
+            back: '/',
+          },
+        ],
       },
     ],
   },

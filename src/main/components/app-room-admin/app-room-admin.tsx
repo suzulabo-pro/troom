@@ -21,14 +21,14 @@ export class AppRoomAdmin {
   @Watch('activePage')
   watchActivePage() {
     this.dataState = undefined;
-    this.inviteCode = undefined;
+    this.inviteURL = undefined;
   }
 
   @State()
   roomName?: string;
 
   @State()
-  inviteCode?: string;
+  inviteURL?: string;
 
   @State()
   dataState?: PromiseState<AsyncReturnType<AppRoomAdmin['loadData']>>;
@@ -58,7 +58,7 @@ export class AppRoomAdmin {
     },
     genInviteURLClick: async () => {
       await this.app.processLoading(async () => {
-        this.inviteCode = await this.app.putInviteCode(this.roomID);
+        this.inviteURL = await this.app.genInviteURL(this.roomID);
       });
     },
   };
@@ -76,7 +76,7 @@ export class AppRoomAdmin {
       msgs: this.app.msgs,
       handlers: this.handlers,
       roomName: this.roomName,
-      inviteCode: this.inviteCode,
+      inviteURL: this.inviteURL,
       canNameFormSubmit,
       isAdmin: this.app.isAdmin(this.roomID),
       dataStatus,
@@ -129,7 +129,7 @@ const renderInviteForm = (ctx: RenderContext) => {
       <button class="generate" onClick={ctx.handlers.genInviteURLClick}>
         {ctx.msgs.roomAdmin.inviteForm.genURLBtn}
       </button>
-      {ctx.inviteCode}
+      {ctx.inviteURL}
     </div>
   );
 };

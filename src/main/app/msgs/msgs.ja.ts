@@ -55,4 +55,8 @@ export const msgs: Msgs = {
       genURLBtn: '招待URLを発行する',
     },
   },
+  roomJoin: {
+    pageTitle: 'ROOM参加',
+    invalidURL: 'このURLは無効です',
+  },
 };

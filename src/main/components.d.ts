@@ -64,6 +64,12 @@ export namespace Components {
         "app": App;
         "roomID": string;
     }
+    interface AppRoomJoin {
+        "activePage": boolean;
+        "app": App;
+        "inviteCode": string;
+        "roomID": string;
+    }
     interface AppRoot {
     }
 }
@@ -146,6 +152,12 @@ declare global {
         prototype: HTMLAppRoomAdminElement;
         new (): HTMLAppRoomAdminElement;
     };
+    interface HTMLAppRoomJoinElement extends Components.AppRoomJoin, HTMLStencilElement {
+    }
+    var HTMLAppRoomJoinElement: {
+        prototype: HTMLAppRoomJoinElement;
+        new (): HTMLAppRoomJoinElement;
+    };
     interface HTMLAppRootElement extends Components.AppRoot, HTMLStencilElement {
     }
     var HTMLAppRootElement: {
@@ -166,6 +178,7 @@ declare global {
         "app-home": HTMLAppHomeElement;
         "app-room": HTMLAppRoomElement;
         "app-room-admin": HTMLAppRoomAdminElement;
+        "app-room-join": HTMLAppRoomJoinElement;
         "app-root": HTMLAppRootElement;
     }
 }
@@ -225,6 +238,12 @@ declare namespace LocalJSX {
         "app": App;
         "roomID": string;
     }
+    interface AppRoomJoin {
+        "activePage": boolean;
+        "app": App;
+        "inviteCode": string;
+        "roomID": string;
+    }
     interface AppRoot {
     }
     interface IntrinsicElements {
@@ -241,6 +260,7 @@ declare namespace LocalJSX {
         "app-home": AppHome;
         "app-room": AppRoom;
         "app-room-admin": AppRoomAdmin;
+        "app-room-join": AppRoomJoin;
         "app-root": AppRoot;
     }
 }
@@ -261,6 +281,7 @@ declare module "@stencil/core" {
             "app-home": LocalJSX.AppHome & JSXBase.HTMLAttributes<HTMLAppHomeElement>;
             "app-room": LocalJSX.AppRoom & JSXBase.HTMLAttributes<HTMLAppRoomElement>;
             "app-room-admin": LocalJSX.AppRoomAdmin & JSXBase.HTMLAttributes<HTMLAppRoomAdminElement>;
+            "app-room-join": LocalJSX.AppRoomJoin & JSXBase.HTMLAttributes<HTMLAppRoomJoinElement>;
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
         }
     }

@@ -1,6 +1,6 @@
 import { JSONSchemaType } from 'ajv';
 import {
-  INVITE_CODE_MAX_LENGTH,
+  INVITE_STORED_CODE_MAX_LENGTH,
   PutInviteCodeParams,
   ROOM_ID_LENGTH,
   ROOM_SIGN_MAX_LENGTH,
@@ -23,7 +23,7 @@ export const PutInviteCodeParamsSchema: JSONSchemaType<PutInviteCodeParams> = {
     },
     code: {
       type: 'string',
-      maxLength: INVITE_CODE_MAX_LENGTH,
+      maxLength: INVITE_STORED_CODE_MAX_LENGTH,
     },
     sign: {
       type: 'string',

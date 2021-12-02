@@ -42,4 +42,8 @@ export interface Msgs {
       genURLBtn: string;
     };
   };
+  roomJoin: {
+    pageTitle: string;
+    invalidURL: string;
+  };
 }

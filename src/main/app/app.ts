@@ -217,7 +217,7 @@ export class App {
     };
   }
 
-  async putInviteCode(id: string) {
+  async genInviteURL(id: string) {
     const roomInfo = roomsMan.get()[id];
     if (!roomInfo) {
       console.warn('not my room', id);
@@ -251,7 +251,51 @@ export class App {
       sign: sign_bs62,
     });
 
-    return bs62.encode(keyCode);
+    return `${location.origin}/${id}/join/${bs62.encode(keyCode)}`;
+  }
+
+  async joinRoom(id: string, codeS: string) {
+    if (this.isMyRoom(id)) {
+      return true;
+    }
+
+    const room = await this.appFirebase.getRoom(id, true);
+    if (!room) {
+      console.warn('no room', id);
+      return;
+    }
+
+    const storedCode = room.invite?.code.toUint8Array();
+    if (!storedCode) {
+      console.warn('no storedCode', id);
+      return;
+    }
+
+    const code = bs62.decode(codeS);
+    const h = nacl.hash(code);
+    const key = {
+      key: h.slice(0, nacl.secretbox.keyLength),
+      nonce: h.slice(nacl.secretbox.nonceLength * -1),
+    };
+
+    const signKey = nacl.secretbox.open(storedCode, key.nonce, key.key);
+    if (!signKey) {
+      console.warn('decrypt error', id, codeS);
+      return;
+    }
+
+    const pubKey = nacl.sign.keyPair.fromSecretKey(signKey).publicKey;
+
+    if (!nacl.verify(pubKey, room.signKey.toUint8Array())) {
+      console.warn('pubkey is not same', id, codeS);
+      return;
+    }
+
+    const fp = bs62.encode(nacl.randomBytes(nacl.sign.secretKeyLength));
+
+    roomsMan.add(id, { name: room.name, signKey: bs62.encode(signKey), fp });
+
+    return true;
   }
 }
 
