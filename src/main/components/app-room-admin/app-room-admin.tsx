@@ -129,7 +129,11 @@ const renderInviteForm = (ctx: RenderContext) => {
       <button class="generate" onClick={ctx.handlers.genInviteURLClick}>
         {ctx.msgs.roomAdmin.inviteForm.genURLBtn}
       </button>
-      {ctx.inviteURL}
+      {ctx.inviteURL && (
+        <div class="url">
+          <span>{ctx.inviteURL}</span>
+        </div>
+      )}
     </div>
   );
 };

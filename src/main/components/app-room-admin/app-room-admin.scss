@@ -9,4 +9,19 @@ app-room-admin {
       margin: 20px auto;
     }
   }
+
+  .invite-form {
+    padding: 10px;
+    text-align: center;
+
+    .url {
+      margin-top: 20px;
+      border-radius: 5px;
+      border: 1px solid var(--light-border-color);
+      user-select: all;
+      padding: 10px;
+      font-weight: bolder;
+      word-break: break-all;
+    }
+  }
 }
