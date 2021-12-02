@@ -1,12 +1,13 @@
-import { Component, Fragment, h, Host, Prop, State } from '@stencil/core';
+import { Component, Fragment, h, Host, Listen, Prop, State, Watch } from '@stencil/core';
 import { AsyncReturnType } from 'type-fest';
 import { assertIsDefined, AUTHOR_MAX_LENGTH, BODY_TEXT_MAX_LENGTH } from '../../../shared';
 import {
+  FirestoreUpdatedEvent,
+  href,
   PromiseState,
   redirectRoute,
   setDocumentTitle,
   setHeaderButtons,
-  href,
 } from '../../../shared-web';
 import { App } from '../../app/app';
 
@@ -23,6 +24,21 @@ export class AppRoom {
 
   @Prop()
   roomID!: string;
+
+  @Watch('activePage')
+  watchActivePage() {
+    this.dataState = undefined;
+  }
+
+  @Listen('FirestoreUpdated', { target: 'window' })
+  handleFirestoreUpdated(event: FirestoreUpdatedEvent) {
+    if (this.activePage) {
+      const { collection, id } = event.detail;
+      if (collection == 'rooms' && id == this.roomID) {
+        this.dataState = undefined;
+      }
+    }
+  }
 
   @State()
   showPostModal = false;

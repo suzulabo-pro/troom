@@ -1,7 +1,7 @@
-import { Component, Fragment, h, Host, Prop, State } from '@stencil/core';
+import { Component, Fragment, h, Host, Listen, Prop, State, Watch } from '@stencil/core';
 import { AsyncReturnType } from 'type-fest';
 import { assertIsDefined, ROOM_NAME_MAX_LENGTH } from '../../../shared';
-import { href, PromiseState, setDocumentTitle } from '../../../shared-web';
+import { FirestoreUpdatedEvent, href, PromiseState, setDocumentTitle } from '../../../shared-web';
 import { App } from '../../app/app';
 
 @Component({
@@ -14,6 +14,21 @@ export class AppHome {
 
   @Prop()
   app!: App;
+
+  @Watch('activePage')
+  watchActivePage() {
+    this.dataState = undefined;
+  }
+
+  @Listen('FirestoreUpdated', { target: 'window' })
+  handleFirestoreUpdated(event: FirestoreUpdatedEvent) {
+    if (this.activePage) {
+      const { collection } = event.detail;
+      if (collection == 'rooms') {
+        this.dataState = undefined;
+      }
+    }
+  }
 
   @State()
   showCreateModal?: boolean;
@@ -52,6 +67,7 @@ export class AppHome {
         if (name) {
           await this.app.createRoom(name);
           this.showCreateModal = false;
+          this.dataState = undefined;
         }
       });
     },
