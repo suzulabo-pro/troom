@@ -28,6 +28,7 @@ export class AppRoom {
   @Watch('activePage')
   watchActivePage() {
     this.dataState = undefined;
+    this.loadedDataState = undefined;
   }
 
   @Listen('FirestoreUpdated', { target: 'window' })
@@ -49,6 +50,8 @@ export class AppRoom {
   @State()
   dataState?: PromiseState<AsyncReturnType<AppRoom['loadData']>>;
 
+  private loadedDataState?: AppRoom['dataState'];
+
   private async loadData() {
     if (!this.app.isMyRoom(this.roomID)) {
       return;
@@ -64,6 +67,9 @@ export class AppRoom {
   componentWillRender() {
     if (!this.dataState) {
       this.dataState = new PromiseState(this.loadData());
+      this.dataState.then(() => {
+        this.loadedDataState = this.dataState;
+      });
     }
   }
 
@@ -91,7 +97,8 @@ export class AppRoom {
   };
 
   private renderContext() {
-    const dataStatus = this.dataState?.status();
+    const dataState = this.loadedDataState || this.dataState;
+    const dataStatus = dataState?.status();
     assertIsDefined(dataStatus);
 
     const canPostSubmit = !!this.postValues.author && !!this.postValues.msg;
