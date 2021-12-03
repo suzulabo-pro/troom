@@ -30,13 +30,7 @@ const entries: ScriptEntries = [
 
   [
     'firebase.build',
-    RunS([
-      'functions.build',
-      'console.build',
-      'client.build',
-      Cmd('cp -a dist/console/www-dist firebase/console'),
-      Cmd('cp -a dist/client/www-dist firebase/client'),
-    ]),
+    RunS(['functions.build', 'main.build', Cmd('cp -a dist/main/www-dist firebase/main')]),
   ],
 
   [
