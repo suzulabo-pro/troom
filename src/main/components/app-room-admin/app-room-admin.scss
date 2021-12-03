@@ -1,17 +1,21 @@
 app-room-admin {
+  hr {
+    margin: 50px 5px;
+    border-top: 2px solid var(--light-bk-color);
+  }
+
   .room-form {
     display: flex;
     flex-direction: column;
-    padding: 20px 15px;
+    padding: 20px 15px 0;
 
     button.submit {
       display: inline-block;
-      margin: 20px auto;
+      margin: 20px auto 0;
     }
   }
 
   .invite-form {
-    padding: 10px;
     text-align: center;
 
     .url {
@@ -22,6 +26,24 @@ app-room-admin {
       padding: 10px;
       font-weight: bolder;
       word-break: break-all;
+    }
+  }
+
+  .delete-form {
+    text-align: center;
+  }
+
+  .delete-modal {
+    padding: 20px;
+    .desc {
+      white-space: pre-line;
+    }
+    .buttons {
+      margin-top: 30px;
+      text-align: right;
+      button.submit {
+        margin-left: 20px;
+      }
     }
   }
 }

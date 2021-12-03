@@ -58,6 +58,12 @@ export const msgs: Msgs = {
     inviteForm: {
       genURLBtn: '招待URLを発行する',
     },
+    deleteForm: {
+      deleteBtn: '削除する',
+    },
+    deleteConfirm: (s: string) =>
+      `「${s}」を削除します。\nよろしいですか？\n(この操作は取り消しできません)`,
+    deleteBtn: '削除する',
   },
   roomJoin: {
     pageTitle: 'ROOM参加',

@@ -45,6 +45,11 @@ export interface Msgs {
     inviteForm: {
       genURLBtn: string;
     };
+    deleteForm: {
+      deleteBtn: string;
+    };
+    deleteConfirm: (s: string) => string;
+    deleteBtn: string;
   };
   roomJoin: {
     pageTitle: string;

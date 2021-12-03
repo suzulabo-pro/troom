@@ -31,6 +31,9 @@ export class AppRoomAdmin {
   inviteURL?: string;
 
   @State()
+  showDeleteModal?: boolean;
+
+  @State()
   dataState?: PromiseState<AsyncReturnType<AppRoomAdmin['loadData']>>;
 
   private async loadData() {
@@ -69,6 +72,15 @@ export class AppRoomAdmin {
         this.inviteURL = await this.app.genInviteURL(this.roomID);
       });
     },
+    showDeleteClick: () => {
+      this.showDeleteModal = true;
+    },
+    deleteModalClose: () => {
+      this.showDeleteModal = false;
+    },
+    deleteSubmit: () => {
+      //
+    },
   };
 
   private renderContext() {
@@ -85,6 +97,7 @@ export class AppRoomAdmin {
       handlers: this.handlers,
       roomName: this.roomName,
       inviteURL: this.inviteURL,
+      showDeleteModal: this.showDeleteModal,
       canRoomFormSubmit,
       isAdmin: this.app.isAdmin(this.roomID),
       dataStatus,
@@ -110,7 +123,12 @@ const render = (ctx: RenderContext) => {
   return (
     <Host>
       {renderRoomForm(ctx)}
+      <hr />
       {renderInviteForm(ctx)}
+      <hr />
+      {renderDeleteForm(ctx)}
+
+      {renderDeleteModal(ctx)}
     </Host>
   );
 };
@@ -147,5 +165,37 @@ const renderInviteForm = (ctx: RenderContext) => {
         </div>
       )}
     </div>
+  );
+};
+
+const renderDeleteForm = (ctx: RenderContext) => {
+  return (
+    <div class="delete-form">
+      <button class="delete" onClick={ctx.handlers.showDeleteClick}>
+        {ctx.msgs.roomAdmin.deleteForm.deleteBtn}
+      </button>
+    </div>
+  );
+};
+
+const renderDeleteModal = (ctx: RenderContext) => {
+  if (!ctx.showDeleteModal || !ctx.roomName) {
+    return;
+  }
+
+  return (
+    <ap-modal onClose={ctx.handlers.deleteModalClose}>
+      <div class="delete-modal">
+        <div class="desc">{ctx.msgs.roomAdmin.deleteConfirm(ctx.roomName)}</div>
+        <div class="buttons">
+          <button onClick={ctx.handlers.deleteModalClose} class="clear cancel">
+            {ctx.msgs.common.cancel}
+          </button>
+          <button onClick={ctx.handlers.deleteSubmit} class="submit">
+            {ctx.msgs.roomAdmin.deleteBtn}
+          </button>
+        </div>
+      </div>
+    </ap-modal>
   );
 };
