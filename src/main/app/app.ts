@@ -135,10 +135,7 @@ export class App {
     return roomsMan.get()[id]?.author;
   }
 
-  deleteMyRoom(id: string, force?: boolean) {
-    if (!force && this.isAdmin(id)) {
-      return;
-    }
+  deleteMyRoom(id: string) {
     roomsMan.delete(id);
   }
 
@@ -365,7 +362,7 @@ export class App {
       sign: sign_bs62,
     });
 
-    this.deleteMyRoom(id, true);
+    this.deleteMyRoom(id);
   }
 }
 

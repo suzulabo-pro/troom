@@ -186,7 +186,7 @@ const renderRooms = (ctx: RenderContext) => {
                       </Fragment>
                     )}
                   </div>
-                  {v.isAdmin ? (
+                  {room && v.isAdmin ? (
                     <button
                       class="icon config"
                       data-room-id={v.id}
