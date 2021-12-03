@@ -33,7 +33,11 @@ export const msgs: Msgs = {
   home: {
     pageTitle: titleSuffix,
     createBtn: 'ルームを作る',
+    created: '作成日 : ',
+    lastPost: '最新投稿 : ',
     createForm: { name: 'ルーム名' },
+    deleteConfirm: (s: string) => `「${s}」から退室します。\nよろしいですか？`,
+    deleteBtn: '削除する',
   },
   room: {
     pageTitle: (s: string) => `${s} - ${titleSuffix}`,

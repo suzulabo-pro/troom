@@ -17,11 +17,29 @@ app-home {
     grid-template-columns: repeat(auto-fit, minmax(300px, 350px));
 
     .card {
-      min-height: 100px;
+      min-height: 80px;
       padding: 10px;
 
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      .info {
+        flex-grow: 1;
+
+        .info-grid {
+          margin-top: 10px;
+          font-size: 0.9em;
+          color: var(--light-color);
+          display: grid;
+          gap: 5px;
+          grid-template-columns: max-content auto;
+          .label {
+            text-align: right;
+          }
+          .value {
+            padding-left: 10px;
+          }
+        }
+      }
     }
   }
 
@@ -42,6 +60,20 @@ app-home {
     }
     button.cancel {
       margin-top: 10px;
+    }
+  }
+
+  .delete-modal {
+    padding: 20px;
+    .desc {
+      white-space: pre-line;
+    }
+    .buttons {
+      margin-top: 30px;
+      text-align: right;
+      button.submit {
+        margin-left: 20px;
+      }
     }
   }
 }

@@ -56,6 +56,13 @@ class RoomsManager {
       this.set(rooms);
     }
   }
+  delete(id: string) {
+    const rooms = this.get();
+    if (id in rooms) {
+      delete rooms[id];
+      this.set(rooms);
+    }
+  }
 }
 
 const roomsMan = new RoomsManager();
@@ -120,8 +127,19 @@ export class App {
     return !!roomsMan.get()[id]?.adminKey;
   }
 
+  getRoomName(id: string) {
+    return roomsMan.get()[id]?.name;
+  }
+
   getAuthor(id: string) {
     return roomsMan.get()[id]?.author;
+  }
+
+  deleteMyRoom(id: string) {
+    if (this.isAdmin(id)) {
+      return;
+    }
+    roomsMan.delete(id);
   }
 
   async createRoom(name: string) {
@@ -149,7 +167,7 @@ export class App {
   }
 
   async loadRooms() {
-    const rooms = [] as { id: string; name: string; room?: Room }[];
+    const rooms = [] as { id: string; name: string; room?: Room; isAdmin: boolean }[];
 
     for (const [id, info] of Object.entries(roomsMan.get())) {
       const room = await this.appFirebase.getRoom(id);
@@ -159,7 +177,7 @@ export class App {
         info.name = room.name;
       }
 
-      rooms.push({ id, name: info.name, room });
+      rooms.push({ id, name: info.name, room, isAdmin: this.isAdmin(id) });
     }
 
     return rooms;

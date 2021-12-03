@@ -1,7 +1,13 @@
 import { Component, Fragment, h, Host, Listen, Prop, State, Watch } from '@stencil/core';
 import { AsyncReturnType } from 'type-fest';
 import { assertIsDefined, ROOM_NAME_MAX_LENGTH } from '../../../shared';
-import { FirestoreUpdatedEvent, href, PromiseState, setDocumentTitle } from '../../../shared-web';
+import {
+  FirestoreUpdatedEvent,
+  href,
+  PromiseState,
+  pushRoute,
+  setDocumentTitle,
+} from '../../../shared-web';
 import { App } from '../../app/app';
 
 @Component({
@@ -32,6 +38,9 @@ export class AppHome {
 
   @State()
   showCreateModal?: boolean;
+
+  @State()
+  deletingRoom?: { id: string; name: string };
 
   @State()
   values?: { name?: string };
@@ -71,6 +80,36 @@ export class AppHome {
         }
       });
     },
+
+    deleteClick: (ev: Event) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const el = ev.currentTarget as HTMLElement;
+      const roomID = el.getAttribute('data-room-id') || undefined;
+      if (roomID) {
+        this.deletingRoom = { id: roomID, name: this.app.getRoomName(roomID) || '' };
+      }
+    },
+    deleteModalClose: () => {
+      this.deletingRoom = undefined;
+    },
+    deleteSubmit: () => {
+      if (this.deletingRoom) {
+        this.app.deleteMyRoom(this.deletingRoom.id);
+        this.deletingRoom = undefined;
+        this.dataState = undefined;
+      }
+    },
+
+    configClick: (ev: Event) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const el = ev.currentTarget as HTMLElement;
+      const roomID = el.getAttribute('data-room-id') || undefined;
+      if (roomID) {
+        pushRoute(`/${roomID}/admin`);
+      }
+    },
   };
 
   private renderContext() {
@@ -82,6 +121,7 @@ export class AppHome {
       msgs: this.app.msgs,
       handlers: this.handlers,
       showCreateModal: this.showCreateModal,
+      deletingRoom: this.deletingRoom,
       values: this.values,
       dataStatus,
       canSubmit,
@@ -104,6 +144,7 @@ const render = (ctx: RenderContext) => {
     <Host>
       {renderRooms(ctx)}
       {renderCreateModal(ctx)}
+      {renderDeletingModal(ctx)}
     </Host>
   );
 };
@@ -120,10 +161,45 @@ const renderRooms = (ctx: RenderContext) => {
         <Fragment>
           <div class="rooms-grid">
             {value.rooms.map(v => {
+              const room = v.room;
+              const lastPost = room?.msgs[room.msgs.length - 1];
+
               return (
                 <a {...href(`/${v.id}`)} class="card">
-                  {v.name}
-                  {!v.room && <div>missing</div>}
+                  <div class="info">
+                    {!room ? (
+                      <div>missing</div>
+                    ) : (
+                      <Fragment>
+                        <div class="name">{room.name}</div>
+                        <div class="info-grid">
+                          <span class="label">{ctx.msgs.home.lastPost}</span>
+                          <span class="value">
+                            {lastPost ? ctx.msgs.common.datetime(lastPost.cT.toMillis()) : '-'}
+                          </span>
+                          <span class="label">{ctx.msgs.home.created}</span>
+                          <span class="value">{ctx.msgs.common.datetime(room.cT.toMillis())}</span>
+                        </div>
+                      </Fragment>
+                    )}
+                  </div>
+                  {v.isAdmin ? (
+                    <button
+                      class="icon config"
+                      data-room-id={v.id}
+                      onClick={ctx.handlers.configClick}
+                    >
+                      <ap-icon icon="gear" />
+                    </button>
+                  ) : (
+                    <button
+                      class="icon delete"
+                      data-room-id={v.id}
+                      onClick={ctx.handlers.deleteClick}
+                    >
+                      <ap-icon icon="trash" />
+                    </button>
+                  )}
                 </a>
               );
             })}
@@ -159,7 +235,28 @@ const renderCreateModal = (ctx: RenderContext) => {
         <button onClick={ctx.handlers.createModalClose} class="clear cancel">
           {ctx.msgs.common.cancel}
         </button>
-        <div class="buttons"></div>
+      </div>
+    </ap-modal>
+  );
+};
+
+const renderDeletingModal = (ctx: RenderContext) => {
+  if (!ctx.deletingRoom) {
+    return;
+  }
+
+  return (
+    <ap-modal onClose={ctx.handlers.deleteModalClose}>
+      <div class="delete-modal">
+        <div class="desc">{ctx.msgs.home.deleteConfirm(ctx.deletingRoom.name)}</div>
+        <div class="buttons">
+          <button onClick={ctx.handlers.deleteModalClose} class="clear cancel">
+            {ctx.msgs.common.cancel}
+          </button>
+          <button onClick={ctx.handlers.deleteSubmit} class="submit">
+            {ctx.msgs.home.deleteBtn}
+          </button>
+        </div>
       </div>
     </ap-modal>
   );

@@ -18,9 +18,13 @@ export interface Msgs {
   home: {
     pageTitle: string;
     createBtn: string;
+    created: string;
+    lastPost: string;
     createForm: {
       name: string;
     };
+    deleteConfirm: (s: string) => string;
+    deleteBtn: string;
   };
   room: {
     pageTitle: (s: string) => string;
