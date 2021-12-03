@@ -9,10 +9,10 @@ app-room {
 
   .msgs {
     .msg {
-      margin: 15px 10px 10px;
+      margin: 20px 10px 10px;
 
       border-bottom: 1px dotted var(--light-border-color);
-      padding-bottom: 10px;
+      padding-bottom: 20px;
 
       .head {
         display: flex;
@@ -26,7 +26,7 @@ app-room {
         }
       }
       .body {
-        margin-top: 10px;
+        margin-top: 20px;
       }
       .fp {
         text-align: right;
@@ -40,7 +40,7 @@ app-room {
   .form-modal {
     padding: 5px;
     ap-input.body {
-      margin-top: 5px;
+      margin-top: 20px;
     }
     .buttons {
       margin-top: 10px;
