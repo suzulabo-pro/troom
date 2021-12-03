@@ -1,0 +1,79 @@
+app-home {
+  display: flex;
+  flex-direction: column;
+
+  ap-spinner {
+    margin: auto;
+  }
+
+  .rooms-grid {
+    margin-top: 30px;
+    display: grid;
+    width: 100%;
+    padding: 10px;
+    gap: 15px;
+    justify-content: center;
+
+    grid-template-columns: repeat(auto-fit, minmax(300px, 350px));
+
+    .card {
+      min-height: 80px;
+      padding: 10px;
+
+      display: flex;
+      align-items: center;
+      .info {
+        flex-grow: 1;
+
+        .info-grid {
+          margin-top: 10px;
+          font-size: 0.9em;
+          color: var(--light-color);
+          display: grid;
+          gap: 5px;
+          grid-template-columns: max-content auto;
+          .label {
+            text-align: right;
+          }
+          .value {
+            padding-left: 10px;
+          }
+        }
+      }
+    }
+  }
+
+  button.create {
+    margin: 30px auto;
+  }
+
+  .create-modal {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+
+    button {
+      align-self: center;
+    }
+    button.submit {
+      margin-top: 30px;
+    }
+    button.cancel {
+      margin-top: 10px;
+    }
+  }
+
+  .delete-modal {
+    padding: 20px;
+    .desc {
+      white-space: pre-line;
+    }
+    .buttons {
+      margin-top: 30px;
+      text-align: right;
+      button.submit {
+        margin-left: 20px;
+      }
+    }
+  }
+}

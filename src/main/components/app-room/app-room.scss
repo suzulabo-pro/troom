@@ -1,0 +1,59 @@
+app-room {
+  .name {
+    padding: 20px 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.3em;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .msgs {
+    .msg {
+      margin: 20px 10px 10px;
+
+      border-bottom: 1px dotted var(--light-border-color);
+      padding-bottom: 20px;
+
+      .head {
+        display: flex;
+        font-size: 0.9em;
+        .author {
+          font-weight: bold;
+        }
+        .date {
+          margin-left: auto;
+          color: var(--light-color);
+        }
+      }
+      .body {
+        margin-top: 20px;
+      }
+      .fp {
+        text-align: right;
+        color: var(--light-color);
+        font-size: 0.9em;
+      }
+    }
+  }
+
+  --modal-content-margin: 20px auto auto;
+  .form-modal {
+    padding: 5px;
+    ap-input.body {
+      margin-top: 20px;
+    }
+    .buttons {
+      margin-top: 10px;
+      display: flex;
+
+      button.cancel {
+        margin: 0 5px 0 auto;
+      }
+    }
+  }
+
+  .admin {
+    margin: 30px 10px 0;
+    text-align: right;
+  }
+}

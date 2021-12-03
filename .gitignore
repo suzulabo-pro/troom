@@ -1,0 +1,19 @@
+.DS_Store
+
+node_modules/
+dist/
+www/
+www-dist/
+
+
+# secrets
+secrets.json
+appenv.env.ts
+.firebaserc
+SECRET_VALUES.txt
+
+
+/firebase/*.log
+/firebase/emu-data/
+/firebase/main
+/scripts/dev-proxy/*.pem
