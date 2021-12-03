@@ -1,0 +1,34 @@
+inputs:
+  SECRET_VALUES:
+    required: true
+
+outputs:
+  BUILD_NUMBER:
+    value: ${{ steps.build_version.outputs.BUILD_NUMBER }}
+  APP_VERSION:
+    value: ${{ steps.build_version.outputs.APP_VERSION }}
+
+runs:
+  using: 'composite'
+
+  steps:
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+        cache: 'npm'
+
+    - run: npm ci
+      shell: bash
+
+    - run: npm run - secrets.unpack
+      shell: bash
+      env:
+        SECRET_VALUES: ${{ inputs.SECRET_VALUES }}
+      id: unpack_secrets
+
+    - run: npm run - secrets.copy
+      shell: bash
+
+    - id: build_version
+      run: node .github/workflows/build_version.js
+      shell: bash
