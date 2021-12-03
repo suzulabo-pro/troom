@@ -18,8 +18,13 @@ const Sec = (name: string, locaction?: string) => {
 export const SECRET_FILES: SecretFile[] = [Sec('.firebaserc', 'firebase'), Sec('appenv.env.ts')];
 
 export const loadSecretJSON = () => {
+  const jsonFile = path.join(SECRET_DIR, 'secrets.json');
+  if (!fs.existsSync(jsonFile)) {
+    return {};
+  }
+
   const secretsJson: Record<SECRETS_KEYS_UNION, string> = JSON.parse(
-    fs.readFileSync(path.join(SECRET_DIR, 'secrets.json'), 'utf-8'),
+    fs.readFileSync(jsonFile, 'utf-8'),
   );
 
   return secretsJson;
