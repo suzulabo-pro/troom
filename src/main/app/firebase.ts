@@ -16,6 +16,7 @@ import {
   AppEnv,
   CreateRoomParams,
   CreateRoomResult,
+  DeleteRoomParams,
   EditRoomParams,
   PutInviteCodeParams,
   PutRoomMsgParams,
@@ -79,6 +80,10 @@ export class AppFirebase {
 
   async putInviteCode(params: PutInviteCodeParams) {
     return this.callFunc<PutInviteCodeParams, void>(params);
+  }
+
+  async deleteRoom(params: DeleteRoomParams) {
+    return this.callFunc<DeleteRoomParams, void>(params);
   }
 
   async getRoom(id: string, temporary?: boolean) {

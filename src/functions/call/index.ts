@@ -3,6 +3,7 @@ import { CallableContext, FirebaseAdminApp } from '../firebase';
 import { validators } from '../json-schema';
 import { logger } from '../utils/logger';
 import { createRoom } from './create-room';
+import { deleteRoom } from './delete-room';
 import { editRoom } from './edit-room';
 import { putInviteCode } from './put-invite-code';
 import { putRoomMsg } from './put-room-msg';
@@ -47,6 +48,11 @@ export const httpsCallHandler = async (
       case 'PutInviteCode':
         if (validators.PutInviteCodeParams(data)) {
           return putInviteCode(data, context, adminApp);
+        }
+        break;
+      case 'DeleteRoom':
+        if (validators.DeleteRoomParams(data)) {
+          return deleteRoom(data, context, adminApp);
         }
         break;
     }

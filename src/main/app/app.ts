@@ -135,8 +135,8 @@ export class App {
     return roomsMan.get()[id]?.author;
   }
 
-  deleteMyRoom(id: string) {
-    if (this.isAdmin(id)) {
+  deleteMyRoom(id: string, force?: boolean) {
+    if (!force && this.isAdmin(id)) {
       return;
     }
     roomsMan.delete(id);
@@ -339,6 +339,33 @@ export class App {
     roomsMan.add(id, { name: room.name, signKey: bs62.encode(signKey), fp });
 
     return true;
+  }
+
+  async deleteRoom(id: string) {
+    const roomInfo = roomsMan.get()[id];
+    if (!roomInfo) {
+      console.warn('not my room', id);
+      return;
+    }
+    if (!roomInfo.adminKey) {
+      console.warn('not admin', id);
+      return;
+    }
+
+    const adminKey = bs62.decode(roomInfo.adminKey);
+
+    const msg = new TextEncoder().encode(['DeleteRoom', id].join('\0'));
+    const sign = nacl.sign.detached(msg, adminKey);
+
+    const sign_bs62 = bs62.encode(sign);
+
+    await this.appFirebase.deleteRoom({
+      method: 'DeleteRoom',
+      id,
+      sign: sign_bs62,
+    });
+
+    this.deleteMyRoom(id, true);
   }
 }
 

@@ -1,7 +1,7 @@
 import { Component, h, Host, Prop, State, Watch } from '@stencil/core';
 import { AsyncReturnType } from 'type-fest';
 import { assertIsDefined, ROOM_NAME_MAX_LENGTH } from '../../../shared';
-import { PromiseState, setDocumentTitle } from '../../../shared-web';
+import { PromiseState, redirectRoute, setDocumentTitle } from '../../../shared-web';
 import { App } from '../../app/app';
 
 @Component({
@@ -22,6 +22,7 @@ export class AppRoomAdmin {
   watchActivePage() {
     this.dataState = undefined;
     this.inviteURL = undefined;
+    this.showDeleteModal = false;
   }
 
   @State()
@@ -39,6 +40,7 @@ export class AppRoomAdmin {
   private async loadData() {
     const room = await this.app.getRoom(this.roomID);
     if (!room) {
+      redirectRoute('/');
       return;
     }
     return { room };
@@ -78,8 +80,12 @@ export class AppRoomAdmin {
     deleteModalClose: () => {
       this.showDeleteModal = false;
     },
-    deleteSubmit: () => {
-      //
+    deleteSubmit: async () => {
+      await this.app.processLoading(async () => {
+        await this.app.deleteRoom(this.roomID);
+      });
+      this.showDeleteModal = false;
+      redirectRoute('/');
     },
   };
 

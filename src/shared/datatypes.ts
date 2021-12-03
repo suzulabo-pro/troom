@@ -31,6 +31,12 @@ export interface EditRoomParams {
   sign: string;
 }
 
+export interface DeleteRoomParams {
+  method: 'DeleteRoom';
+  id: string;
+  sign: string;
+}
+
 export interface CreateRoomResult {
   id: string;
 }

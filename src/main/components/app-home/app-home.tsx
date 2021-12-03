@@ -168,7 +168,10 @@ const renderRooms = (ctx: RenderContext) => {
                 <a {...href(`/${v.id}`)} class="card">
                   <div class="info">
                     {!room ? (
-                      <div>missing</div>
+                      <Fragment>
+                        <div class="name">{v.name}</div>
+                        <div>Missing ROOM</div>
+                      </Fragment>
                     ) : (
                       <Fragment>
                         <div class="name">{room.name}</div>
