@@ -47,8 +47,8 @@ export const msgs: Msgs = {
   },
   roomAdmin: {
     pageTitle: (s: string) => `${s} - 設定 - ${titleSuffix}`,
-    nameForm: {
-      roomName: 'ルーム名',
+    roomForm: {
+      name: 'ルーム名',
       updateBtn: '更新する',
     },
     inviteForm: {

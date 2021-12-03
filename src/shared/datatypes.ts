@@ -24,6 +24,13 @@ export interface CreateRoomParams {
   adminKey: string;
 }
 
+export interface EditRoomParams {
+  method: 'EditRoom';
+  id: string;
+  name: string;
+  sign: string;
+}
+
 export interface CreateRoomResult {
   id: string;
 }

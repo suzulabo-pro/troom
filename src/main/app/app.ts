@@ -169,6 +169,31 @@ export class App {
     return this.appFirebase.getRoom(id);
   }
 
+  async editRoom(id: string, name: string) {
+    const roomInfo = roomsMan.get()[id];
+    if (!roomInfo) {
+      console.warn('not my room', id);
+      return;
+    }
+    if (!roomInfo.adminKey) {
+      console.warn('not admin', id);
+      return;
+    }
+
+    const adminKey = bs62.decode(roomInfo.adminKey);
+
+    const sign = nacl.sign.detached(new TextEncoder().encode(name), adminKey);
+
+    const sign_bs62 = bs62.encode(sign);
+
+    await this.appFirebase.editRoom({
+      method: 'EditRoom',
+      id,
+      name,
+      sign: sign_bs62,
+    });
+  }
+
   async putRoomMsg(id: string, author: string, bodyS: string) {
     const roomInfo = roomsMan.get()[id];
     if (!roomInfo) {

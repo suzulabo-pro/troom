@@ -16,6 +16,7 @@ import {
   AppEnv,
   CreateRoomParams,
   CreateRoomResult,
+  EditRoomParams,
   PutInviteCodeParams,
   PutRoomMsgParams,
 } from '../../shared';
@@ -66,6 +67,10 @@ export class AppFirebase {
 
   async createRoom(params: CreateRoomParams) {
     return this.callFunc<CreateRoomParams, CreateRoomResult>(params);
+  }
+
+  async editRoom(params: EditRoomParams) {
+    return this.callFunc<EditRoomParams, void>(params);
   }
 
   async putRoomMsg(params: PutRoomMsgParams) {

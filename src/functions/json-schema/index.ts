@@ -1,15 +1,22 @@
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
-import { CreateRoomParams, PutRoomMsgParams, PutInviteCodeParams } from '../../shared';
+import {
+  CreateRoomParams,
+  EditRoomParams,
+  PutInviteCodeParams,
+  PutRoomMsgParams,
+} from '../../shared';
 import { logger } from '../utils/logger';
 import { CreateRoomParamsSchema } from './create-room-params';
-import { PutRoomMsgParamsSchema } from './put-room-msg-params';
+import { EditRoomParamsSchema } from './edit-room-params';
 import { PutInviteCodeParamsSchema } from './put-invite-code-params';
+import { PutRoomMsgParamsSchema } from './put-room-msg-params';
 
 const ajv = new Ajv();
 addFormats(ajv);
 
 ajv.addSchema(CreateRoomParamsSchema, 'CreateRoomParams');
+ajv.addSchema(EditRoomParamsSchema, 'EditRoomParams');
 ajv.addSchema(PutRoomMsgParamsSchema, 'PutRoomMsgParams');
 ajv.addSchema(PutInviteCodeParamsSchema, 'PutInviteCodeParams');
 
@@ -28,6 +35,7 @@ const genValidator = <T>(k: string) => {
 
 export const validators = {
   CreateRoomParams: genValidator<CreateRoomParams>('CreateRoomParams'),
+  EditRoomParams: genValidator<EditRoomParams>('EditRoomParams'),
   PutRoomMsgParams: genValidator<PutRoomMsgParams>('PutRoomMsgParams'),
   PutInviteCodeParams: genValidator<PutInviteCodeParams>('PutInviteCodeParams'),
 };

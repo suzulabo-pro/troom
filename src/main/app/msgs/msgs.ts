@@ -34,8 +34,8 @@ export interface Msgs {
   };
   roomAdmin: {
     pageTitle: (s: string) => string;
-    nameForm: {
-      roomName: string;
+    roomForm: {
+      name: string;
       updateBtn: string;
     };
     inviteForm: {

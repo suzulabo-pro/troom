@@ -56,6 +56,14 @@ export class AppRoomAdmin {
     inputRoomName: (ev: Event) => {
       this.roomName = (ev.target as HTMLInputElement).value;
     },
+    roomFormSubmit: async () => {
+      await this.app.processLoading(async () => {
+        if (this.roomName) {
+          await this.app.editRoom(this.roomID, this.roomName);
+          this.dataState = undefined;
+        }
+      });
+    },
     genInviteURLClick: async () => {
       await this.app.processLoading(async () => {
         this.inviteURL = await this.app.genInviteURL(this.roomID);
@@ -69,7 +77,7 @@ export class AppRoomAdmin {
 
     const { room } = this.dataState?.result() || {};
 
-    const canNameFormSubmit = !!this.roomName && this.roomName != room?.name;
+    const canRoomFormSubmit = !!this.roomName && this.roomName != room?.name;
 
     return {
       roomID: this.roomID,
@@ -77,7 +85,7 @@ export class AppRoomAdmin {
       handlers: this.handlers,
       roomName: this.roomName,
       inviteURL: this.inviteURL,
-      canNameFormSubmit,
+      canRoomFormSubmit,
       isAdmin: this.app.isAdmin(this.roomID),
       dataStatus,
     };
@@ -101,23 +109,27 @@ type RenderContext = ReturnType<AppRoomAdmin['renderContext']>;
 const render = (ctx: RenderContext) => {
   return (
     <Host>
-      {renderNameForm(ctx)}
+      {renderRoomForm(ctx)}
       {renderInviteForm(ctx)}
     </Host>
   );
 };
 
-const renderNameForm = (ctx: RenderContext) => {
+const renderRoomForm = (ctx: RenderContext) => {
   return (
-    <div class="name-form">
+    <div class="room-form">
       <ap-input
-        label={ctx.msgs.roomAdmin.nameForm.roomName}
+        label={ctx.msgs.roomAdmin.roomForm.name}
         maxLength={ROOM_NAME_MAX_LENGTH}
         value={ctx.roomName}
         onInput={ctx.handlers.inputRoomName}
       />
-      <button class="submit" disabled={!ctx.canNameFormSubmit}>
-        {ctx.msgs.roomAdmin.nameForm.updateBtn}
+      <button
+        class="submit"
+        disabled={!ctx.canRoomFormSubmit}
+        onClick={ctx.handlers.roomFormSubmit}
+      >
+        {ctx.msgs.roomAdmin.roomForm.updateBtn}
       </button>
     </div>
   );
