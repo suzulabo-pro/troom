@@ -4,7 +4,9 @@ import 'source-map-support/register';
 import { AppEnv } from '../shared';
 import { httpsCallHandler } from './call';
 import { getFirestore, initializeApp } from './firebase';
+import { roomsUpdateHandler } from './firestore';
 import { httpsRequestHandler } from './https';
+import { pubsubPingAnnounce } from './pubsub/ping-announcing';
 
 const adminApp = initializeApp();
 const appEnv = new AppEnv().env;
@@ -20,3 +22,18 @@ export const httpsCall = region.https.onCall((data, context) => {
 export const httpsRequest = region.https.onRequest((req, res) => {
   return httpsRequestHandler(req, res, adminApp);
 });
+
+export const firestore = {
+  roomsUpdate: region.firestore.document('rooms/{roomID}').onUpdate(change => {
+    return roomsUpdateHandler(change);
+  }),
+};
+
+const pubsubBuilder = region.pubsub;
+
+export const pubsub = {
+  sendNotification: pubsubBuilder.topic('ping-announcing').onPublish(async (msg, context) => {
+    await pubsubPingAnnounce(msg, context, adminApp);
+    return 0;
+  }),
+};
