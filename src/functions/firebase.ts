@@ -33,3 +33,12 @@ export type BatchResponse = messaging.BatchResponse;
 export { initializeApp } from 'firebase-admin/app';
 export { getFirestore } from 'firebase-admin/firestore';
 export { getMessaging } from 'firebase-admin/messaging';
+
+export const functionsConfig = functions.config() as {
+  readonly announcing: {
+    readonly pingurl: string;
+    readonly announceid: string;
+    readonly jsonkey: string;
+    readonly seckey: string;
+  };
+};

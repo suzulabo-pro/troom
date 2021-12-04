@@ -10,6 +10,9 @@ interface AppEnvironment {
     readonly appId: string;
   };
   readonly functionsRegion: string;
+  readonly sites: {
+    main: string;
+  };
 }
 
 export class AppEnv {
