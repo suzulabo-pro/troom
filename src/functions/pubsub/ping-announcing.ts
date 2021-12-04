@@ -20,7 +20,7 @@ export const addPingAnnouncingTask = async (id: string, uT: number) => {
   await topic.publishMessage({ json: { id, uT } });
 };
 
-export const pubsubPingAnnounce = async (
+export const pubsubPingAnnouncing = async (
   msg: PubSubMessage,
   _context: EventContext,
   adminApp: FirebaseAdminApp,
@@ -54,6 +54,9 @@ const ping = async (id: string): Promise<boolean> => {
   try {
     const url = `${functionsConfig.announcing.pingurl}/${functionsConfig.announcing.announceid}/${id}`;
     const reqID = new Date().toISOString();
+
+    logger.debug('ping', { url });
+
     const res = await axios.get(url, {
       timeout: PING_TIMEOUT,
       maxRedirects: 0,

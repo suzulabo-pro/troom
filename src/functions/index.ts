@@ -6,7 +6,7 @@ import { httpsCallHandler } from './call';
 import { getFirestore, initializeApp } from './firebase';
 import { roomsUpdateHandler } from './firestore';
 import { httpsRequestHandler } from './https';
-import { pubsubPingAnnounce } from './pubsub/ping-announcing';
+import { pubsubPingAnnouncing } from './pubsub/ping-announcing';
 
 const adminApp = initializeApp();
 const appEnv = new AppEnv().env;
@@ -32,8 +32,8 @@ export const firestore = {
 const pubsubBuilder = region.pubsub;
 
 export const pubsub = {
-  sendNotification: pubsubBuilder.topic('ping-announcing').onPublish(async (msg, context) => {
-    await pubsubPingAnnounce(msg, context, adminApp);
+  pingAnnouncing: pubsubBuilder.topic('ping-announcing').onPublish(async (msg, context) => {
+    await pubsubPingAnnouncing(msg, context, adminApp);
     return 0;
   }),
 };
