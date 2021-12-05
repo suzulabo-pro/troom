@@ -27,8 +27,10 @@ export class AppRoom {
 
   @Watch('activePage')
   watchActivePage() {
-    this.dataState = undefined;
-    this.loadedDataState = undefined;
+    if (this.activePage) {
+      this.dataState = undefined;
+      this.loadedDataState = undefined;
+    }
   }
 
   @Listen('FirestoreUpdated', { target: 'window' })
@@ -67,8 +69,16 @@ export class AppRoom {
   componentWillRender() {
     if (!this.dataState) {
       this.dataState = new PromiseState(this.loadData());
-      this.dataState.then(() => {
+      this.dataState.then(v => {
         this.loadedDataState = this.dataState;
+        this.readTime = this.app.getReadTime(this.roomID);
+        if (v) {
+          const msgs = v.room.msgs;
+          const t = msgs[msgs.length - 1]?.cT.toMillis();
+          if (t) {
+            this.app.updateReadTime(this.roomID, t);
+          }
+        }
       });
     }
   }
@@ -115,6 +125,7 @@ export class AppRoom {
       decryptMsg: (msg: Parameters<App['decryptMsg']>[1]) => {
         return this.app.decryptMsg(this.roomID, msg);
       },
+      readTime: this.readTime,
       announcingURL: this.app.announcingURL(this.roomID),
     };
   }
@@ -141,6 +152,7 @@ export class AppRoom {
   }
 
   private formFocus?: string;
+  private readTime?: number;
 
   componentDidRender() {
     if (this.formFocus) {
@@ -149,6 +161,17 @@ export class AppRoom {
         ?.querySelector<HTMLInputElement>('input,textarea')
         ?.focus();
       this.formFocus = undefined;
+    }
+
+    if (this.readTime) {
+      // TODO: should wait children are rendered
+      setTimeout(() => {
+        const el = document.querySelector(`app-room div.msg .unread`);
+        if (el) {
+          el.scrollIntoView(true);
+        }
+        this.readTime = undefined;
+      }, 300);
     }
   }
 
@@ -166,6 +189,7 @@ type RenderContext = ReturnType<AppRoom['renderContext']>;
 const render = (ctx: RenderContext) => {
   return (
     <Host>
+      <ap-textview />
       {renderMessages(ctx)}
       {renderPostModal(ctx)}
       <div class="announcing">
@@ -196,12 +220,14 @@ const renderMessages = (ctx: RenderContext) => {
         <Fragment>
           <div class="name">{value.room.name}</div>
           <div class="msgs">
-            {msgs.map(v => {
+            {msgs.map((v, i, arr) => {
               const msg = ctx.decryptMsg(v);
               if (!msg) {
                 // TODO
                 return;
               }
+
+              const unread = msg.cT.toMillis() > (ctx.readTime || 0) || i + 1 == arr.length;
 
               return (
                 <div class="msg">
@@ -213,6 +239,7 @@ const renderMessages = (ctx: RenderContext) => {
                     <ap-textview text={msg.body.trim()} />
                   </div>
                   <div class="fp">{msg.fp}</div>
+                  {unread && <span class="unread"></span>}
                 </div>
               );
             })}

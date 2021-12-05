@@ -24,6 +24,7 @@ interface RoomInfo {
   fp: string;
   adminKey?: string;
   author?: string;
+  readTime?: number;
 }
 type MyRooms = Record<string, RoomInfo>;
 
@@ -54,6 +55,14 @@ class RoomsManager {
     const info = rooms[id];
     if (info && info.author != author) {
       info.author = author;
+      this.set(rooms);
+    }
+  }
+  updateReadTime(id: string, t: number) {
+    const rooms = this.get();
+    const info = rooms[id];
+    if (info && (info.readTime || 0) < t) {
+      info.readTime = t;
       this.set(rooms);
     }
   }
@@ -138,6 +147,14 @@ export class App {
 
   deleteMyRoom(id: string) {
     roomsMan.delete(id);
+  }
+
+  getReadTime(id: string) {
+    return roomsMan.get()[id]?.readTime || 0;
+  }
+
+  updateReadTime(id: string, t: number) {
+    roomsMan.updateReadTime(id, t);
   }
 
   async createRoom(name: string) {
