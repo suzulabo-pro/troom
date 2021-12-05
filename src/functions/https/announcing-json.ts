@@ -30,7 +30,7 @@ export const getAnnouncingJSON = async (
   const json = {
     id: roomID,
     key: functionsConfig.announcing.jsonkey,
-    info: { name: `${room.name} - troom`, desc: `「${room.name}」の新しい投稿をお知らせします` },
+    info: { name: `${room.name}`, desc: `「${room.name}」の新しい投稿をお知らせします` },
     posts: room.msgs.slice(-5).map(v => {
       return {
         body: `${v.author} さんが投稿しました`,
