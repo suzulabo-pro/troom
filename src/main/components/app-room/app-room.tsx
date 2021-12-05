@@ -104,6 +104,9 @@ export class AppRoom {
         this.postValues = this.defaultPostValues();
       });
     },
+    realod: () => {
+      location.reload();
+    },
   };
 
   private renderContext() {
@@ -189,11 +192,13 @@ type RenderContext = ReturnType<AppRoom['renderContext']>;
 const render = (ctx: RenderContext) => {
   return (
     <Host>
-      <ap-textview />
       {renderMessages(ctx)}
       {renderPostModal(ctx)}
-      <div class="announcing">
-        <a class="button icon" href={ctx.announcingURL} target="announcing-troom">
+      <div class="buttons">
+        <button class="icon" onClick={ctx.handlers.realod}>
+          <ap-icon icon="reload" />
+        </button>
+        <a class="button icon announcing" href={ctx.announcingURL} target="announcing-troom">
           <ap-icon icon="announcing" />
         </a>
       </div>
