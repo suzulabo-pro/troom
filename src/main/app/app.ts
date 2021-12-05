@@ -1,5 +1,6 @@
 import nacl from 'tweetnacl';
 import {
+  AppEnv,
   AppError,
   assertIsDefined,
   bs62,
@@ -70,7 +71,7 @@ const roomsMan = new RoomsManager();
 export class App {
   readonly buildInfo = BUILD_INFO;
 
-  constructor(private appMsg: AppMsg, private appFirebase: AppFirebase) {}
+  constructor(private appEnv: AppEnv, private appMsg: AppMsg, private appFirebase: AppFirebase) {}
 
   async init() {
     console.log('start app init');
@@ -363,6 +364,10 @@ export class App {
     });
 
     this.deleteMyRoom(id);
+  }
+
+  announcingURL(id: string) {
+    return `${this.appEnv.env.sites.announcing}-${id}`;
   }
 }
 

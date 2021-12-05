@@ -52,7 +52,7 @@ const ping = async (id: string): Promise<boolean> => {
   }, PING_TIMEOUT);
 
   try {
-    const url = `${functionsConfig.announcing.pingurl}/${functionsConfig.announcing.announceid}/${id}`;
+    const url = `${functionsConfig.announcing.pingurl}/${id}`;
     const reqID = new Date().toISOString();
 
     logger.debug('ping', { url });

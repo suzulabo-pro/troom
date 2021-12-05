@@ -115,6 +115,7 @@ export class AppRoom {
       decryptMsg: (msg: Parameters<App['decryptMsg']>[1]) => {
         return this.app.decryptMsg(this.roomID, msg);
       },
+      announcingURL: this.app.announcingURL(this.roomID),
     };
   }
 
@@ -167,6 +168,11 @@ const render = (ctx: RenderContext) => {
     <Host>
       {renderMessages(ctx)}
       {renderPostModal(ctx)}
+      <div class="announcing">
+        <a class="button icon" href={ctx.announcingURL} target="announcing-troom">
+          <ap-icon icon="announcing" />
+        </a>
+      </div>
       {ctx.isAdmin && (
         <div class="admin">
           <a {...href(`/${ctx.roomID}/admin`)}>{ctx.msgs.room.adminPage}</a>
@@ -204,7 +210,7 @@ const renderMessages = (ctx: RenderContext) => {
                     <span class="date">{ctx.msgs.common.datetime(msg.cT.toMillis())}</span>
                   </div>
                   <div class="body">
-                    <ap-textview text={msg.body} />
+                    <ap-textview text={msg.body.trim()} />
                   </div>
                   <div class="fp">{msg.fp}</div>
                 </div>

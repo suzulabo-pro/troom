@@ -12,6 +12,7 @@ interface AppEnvironment {
   readonly functionsRegion: string;
   readonly sites: {
     main: string;
+    announcing: string;
   };
 }
 
