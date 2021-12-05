@@ -16,4 +16,5 @@ SECRET_VALUES.txt
 /firebase/*.log
 /firebase/emu-data/
 /firebase/main
+/firebase/functions/.runtimeconfig.json
 /scripts/dev-proxy/*.pem

@@ -52,10 +52,10 @@ export class AppRoot {
   private app!: App;
 
   constructor() {
-    const appMsg = new AppMsg();
     const appEnv = new AppEnv();
+    const appMsg = new AppMsg();
     const appFirebase = new AppFirebase(appEnv);
-    this.app = new App(appMsg, appFirebase);
+    this.app = new App(appEnv, appMsg, appFirebase);
   }
 
   async componentWillLoad() {

@@ -11,6 +11,10 @@
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
+        "regex": "^/announcing/[A-Z0-9]{5}$",
+        "function": "httpsRequest"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

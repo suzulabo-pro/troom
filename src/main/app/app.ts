@@ -1,5 +1,6 @@
 import nacl from 'tweetnacl';
 import {
+  AppEnv,
   AppError,
   assertIsDefined,
   bs62,
@@ -23,6 +24,7 @@ interface RoomInfo {
   fp: string;
   adminKey?: string;
   author?: string;
+  readTime?: number;
 }
 type MyRooms = Record<string, RoomInfo>;
 
@@ -56,6 +58,14 @@ class RoomsManager {
       this.set(rooms);
     }
   }
+  updateReadTime(id: string, t: number) {
+    const rooms = this.get();
+    const info = rooms[id];
+    if (info && (info.readTime || 0) < t) {
+      info.readTime = t;
+      this.set(rooms);
+    }
+  }
   delete(id: string) {
     const rooms = this.get();
     if (id in rooms) {
@@ -70,7 +80,7 @@ const roomsMan = new RoomsManager();
 export class App {
   readonly buildInfo = BUILD_INFO;
 
-  constructor(private appMsg: AppMsg, private appFirebase: AppFirebase) {}
+  constructor(private appEnv: AppEnv, private appMsg: AppMsg, private appFirebase: AppFirebase) {}
 
   async init() {
     console.log('start app init');
@@ -137,6 +147,14 @@ export class App {
 
   deleteMyRoom(id: string) {
     roomsMan.delete(id);
+  }
+
+  getReadTime(id: string) {
+    return roomsMan.get()[id]?.readTime || 0;
+  }
+
+  updateReadTime(id: string, t: number) {
+    roomsMan.updateReadTime(id, t);
   }
 
   async createRoom(name: string) {
@@ -363,6 +381,10 @@ export class App {
     });
 
     this.deleteMyRoom(id);
+  }
+
+  announcingURL(id: string) {
+    return `${this.appEnv.env.sites.announcing}-${id}`;
   }
 }
 

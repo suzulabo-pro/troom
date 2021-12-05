@@ -27,6 +27,7 @@ app-room {
       }
       .body {
         margin-top: 20px;
+        line-height: 1.8;
       }
       .fp {
         text-align: right;
@@ -49,6 +50,18 @@ app-room {
       button.cancel {
         margin: 0 5px 0 auto;
       }
+    }
+  }
+
+  .buttons {
+    margin: 30px 10px 0;
+    display: flex;
+    justify-content: center;
+
+    a.announcing {
+      margin-left: auto;
+      border: 1px solid var(--border-color);
+      border-radius: 50%;
     }
   }
 
