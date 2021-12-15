@@ -10,7 +10,7 @@ export interface _Room<Timestamp, Blob> {
     fp: Blob;
     k: Blob;
     author: string;
-    body: Blob;
+    body?: Blob;
     cT: Timestamp;
   }[];
   uT: Timestamp;
@@ -48,6 +48,13 @@ export interface PutRoomMsgParams {
   k: string;
   author: string;
   body: string;
+  sign: string;
+}
+
+export interface DeleteRoomMsgParams {
+  method: 'DeleteRoomMsg';
+  id: string;
+  idx: number;
   sign: string;
 }
 

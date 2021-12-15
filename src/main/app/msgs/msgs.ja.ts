@@ -48,6 +48,7 @@ export const msgs: Msgs = {
       body: 'メッセージ',
       submit: '送信',
     },
+    deleteMsg: 'メッセージを削除します。よろしいですか？',
   },
   roomAdmin: {
     pageTitle: (s: string) => `${s} - 設定 - ${titleSuffix}`,

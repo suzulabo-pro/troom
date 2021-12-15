@@ -137,6 +137,16 @@ export class App {
     return !!roomsMan.get()[id]?.adminKey;
   }
 
+  getFP(id: string) {
+    const roomInfo = roomsMan.get()[id];
+    if (!roomInfo) {
+      return false;
+    }
+
+    const fp = nacl.sign.keyPair.fromSecretKey(bs62.decode(roomInfo.fp)).publicKey;
+    return bs62.encode(fp).slice(0, ROOM_MSG_FP_DISP_LENGTH);
+  }
+
   getRoomName(id: string) {
     return roomsMan.get()[id]?.name;
   }
@@ -171,7 +181,7 @@ export class App {
     const id = result.id;
     assertIsDefined(id);
 
-    const fp = bs62.encode(nacl.randomBytes(nacl.sign.secretKeyLength));
+    const fp = bs62.encode(nacl.sign.keyPair().secretKey);
 
     roomsMan.add(id, {
       name,
@@ -254,11 +264,68 @@ export class App {
     roomsMan.updateAuthor(id, author);
   }
 
+  async deleteRoomMsg(id: string, idx: number) {
+    const roomInfo = roomsMan.get()[id];
+    if (!roomInfo) {
+      console.warn('not my room', id);
+      return;
+    }
+
+    const room = await this.appFirebase.getRoom(id);
+    if (!room) {
+      console.warn('no room', id);
+      return;
+    }
+    const msg = room.msgs[idx];
+    if (!msg) {
+      console.warn('no room msg', { id, idx });
+      return;
+    }
+    if (!msg.body) {
+      console.warn('no room msg body', { id, idx });
+      return;
+    }
+
+    const signKey = bs62.decode(roomInfo.fp);
+    const signMsg = concatArray(msg.k.toUint8Array(), msg.body.toUint8Array());
+    const sign = nacl.sign.detached(signMsg, signKey);
+
+    {
+      const pubKey = msg.fp.toUint8Array();
+      const verify = nacl.sign.detached.verify(signMsg, sign, pubKey);
+      console.log({
+        verify,
+        signMsg,
+        sign,
+        pubKey,
+        signKey,
+        pair: nacl.sign.keyPair.fromSecretKey(signKey),
+      });
+    }
+
+    return this.appFirebase.deleteRoomMsg({
+      method: 'DeleteRoomMsg',
+      id,
+      idx,
+      sign: bs62.encode(sign),
+    });
+  }
+
   decryptMsg(id: string, msg: Room['msgs'][number]) {
     const roomInfo = roomsMan.get()[id];
     if (!roomInfo) {
       console.warn('not my room', id);
       return;
+    }
+
+    const fp = bs62.encode(msg.fp.toUint8Array()).slice(0, ROOM_MSG_FP_DISP_LENGTH);
+
+    if (!msg.body) {
+      return {
+        ...msg,
+        body: undefined,
+        fp,
+      };
     }
 
     const key = deriveMsgKey(
@@ -271,10 +338,9 @@ export class App {
     return {
       ...msg,
       body: !b ? '(decrypt error)' : new TextDecoder().decode(b?.buffer),
-      fp: bs62.encode(msg.fp.toUint8Array()).slice(0, ROOM_MSG_FP_DISP_LENGTH),
+      fp,
     };
   }
-
   async genInviteURL(id: string) {
     const roomInfo = roomsMan.get()[id];
     if (!roomInfo) {
@@ -349,7 +415,7 @@ export class App {
       return;
     }
 
-    const fp = bs62.encode(nacl.randomBytes(nacl.sign.secretKeyLength));
+    const fp = bs62.encode(nacl.sign.keyPair().secretKey);
 
     roomsMan.add(id, { name: room.name, signKey: bs62.encode(signKey), fp });
 
