@@ -35,6 +35,7 @@ export interface Msgs {
       body: string;
       submit: string;
     };
+    deleteMsg: string;
   };
   roomAdmin: {
     pageTitle: (s: string) => string;

@@ -30,25 +30,45 @@ app-room {
         line-height: 1.8;
       }
       .fp {
-        text-align: right;
+        display: flex;
+        justify-content: right;
+        align-items: center;
         color: var(--light-color);
         font-size: 0.9em;
       }
     }
   }
 
-  --modal-content-margin: 20px auto auto;
-  .form-modal {
-    padding: 5px;
-    ap-input.body {
-      margin-top: 20px;
-    }
-    .buttons {
-      margin-top: 10px;
-      display: flex;
+  ap-modal.msg-form {
+    --modal-content-margin: 20px auto auto;
+    .form-modal {
+      padding: 5px;
+      ap-input.body {
+        margin-top: 20px;
+      }
+      .buttons {
+        margin-top: 10px;
+        display: flex;
 
-      button.cancel {
-        margin: 0 5px 0 auto;
+        button.cancel {
+          margin: 0 5px 0 auto;
+        }
+      }
+    }
+  }
+
+  ap-modal.delete-msg {
+    .modal-content {
+      padding: 20px;
+      .desc {
+        white-space: pre-line;
+      }
+      .buttons {
+        margin-top: 30px;
+        text-align: right;
+        button.submit {
+          margin-left: 20px;
+        }
       }
     }
   }

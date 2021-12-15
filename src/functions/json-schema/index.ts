@@ -2,6 +2,7 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import {
   CreateRoomParams,
+  DeleteRoomMsgParams,
   DeleteRoomParams,
   EditRoomParams,
   PutInviteCodeParams,
@@ -9,6 +10,7 @@ import {
 } from '../../shared';
 import { logger } from '../utils/logger';
 import { CreateRoomParamsSchema } from './create-room-params';
+import { DeleteRoomMsgParamsSchema } from './delete-room-msg-params';
 import { DeleteRoomParamsSchema } from './delete-room-schema';
 import { EditRoomParamsSchema } from './edit-room-params';
 import { PutInviteCodeParamsSchema } from './put-invite-code-params';
@@ -20,6 +22,7 @@ addFormats(ajv);
 ajv.addSchema(CreateRoomParamsSchema, 'CreateRoomParams');
 ajv.addSchema(EditRoomParamsSchema, 'EditRoomParams');
 ajv.addSchema(PutRoomMsgParamsSchema, 'PutRoomMsgParams');
+ajv.addSchema(DeleteRoomMsgParamsSchema, 'DeleteRoomMsgParams');
 ajv.addSchema(PutInviteCodeParamsSchema, 'PutInviteCodeParams');
 ajv.addSchema(DeleteRoomParamsSchema, 'DeleteRoomParams');
 
@@ -40,6 +43,7 @@ export const validators = {
   CreateRoomParams: genValidator<CreateRoomParams>('CreateRoomParams'),
   EditRoomParams: genValidator<EditRoomParams>('EditRoomParams'),
   PutRoomMsgParams: genValidator<PutRoomMsgParams>('PutRoomMsgParams'),
+  DeleteRoomMsgParams: genValidator<DeleteRoomMsgParams>('DeleteRoomMsgParams'),
   PutInviteCodeParams: genValidator<PutInviteCodeParams>('PutInviteCodeParams'),
   DeleteRoomParams: genValidator<DeleteRoomParams>('DeleteRoomParams'),
 };

@@ -30,6 +30,8 @@ export class AppRoom {
     if (this.activePage) {
       this.dataState = undefined;
       this.loadedDataState = undefined;
+      this.showPostModal = false;
+      this.deleteMsgModal = { show: false };
     }
   }
 
@@ -42,6 +44,9 @@ export class AppRoom {
       }
     }
   }
+
+  @State()
+  deleteMsgModal: { show: boolean; idx?: number } = { show: false };
 
   @State()
   showPostModal = false;
@@ -107,6 +112,26 @@ export class AppRoom {
     realod: () => {
       location.reload();
     },
+    showDeleteMsgModalClick: (ev: Event) => {
+      const el = ev.currentTarget as HTMLElement;
+      const idx = el.getAttribute('data-msg-idx');
+      if (idx) {
+        this.deleteMsgModal = { show: true, idx: parseInt(idx) };
+      }
+    },
+    deleteMsgModalClose: () => {
+      this.deleteMsgModal = { show: false };
+    },
+    deleteMsgSubmit: async () => {
+      const idx = this.deleteMsgModal.idx;
+      if (idx === undefined) {
+        return;
+      }
+      await this.app.processLoading(async () => {
+        await this.app.deleteRoomMsg(this.roomID, idx);
+        this.deleteMsgModal = { show: false };
+      });
+    },
   };
 
   private renderContext() {
@@ -122,12 +147,14 @@ export class AppRoom {
       handlers: this.handlers,
       postValues: this.postValues,
       showPostModal: this.showPostModal,
+      deleteMsgModal: this.deleteMsgModal,
       isAdmin: this.app.isAdmin(this.roomID),
       canPostSubmit,
       dataStatus,
       decryptMsg: (msg: Parameters<App['decryptMsg']>[1]) => {
         return this.app.decryptMsg(this.roomID, msg);
       },
+      myFP: this.app.getFP(this.roomID),
       readTime: this.readTime,
       announcingURL: this.app.announcingURL(this.roomID),
     };
@@ -194,6 +221,7 @@ const render = (ctx: RenderContext) => {
     <Host>
       {renderMessages(ctx)}
       {renderPostModal(ctx)}
+      {renderDeleteMsgModal(ctx)}
       <div class="buttons">
         <button class="icon" onClick={ctx.handlers.realod}>
           <ap-icon icon="reload" />
@@ -241,9 +269,20 @@ const renderMessages = (ctx: RenderContext) => {
                     <span class="date">{ctx.msgs.common.datetime(msg.cT.toMillis())}</span>
                   </div>
                   <div class="body">
-                    <ap-textview text={msg.body.trim()} />
+                    {msg.body ? <ap-textview text={msg.body.trim()} /> : <span>(deleted)</span>}
                   </div>
-                  <div class="fp">{msg.fp}</div>
+                  <div class="fp">
+                    <span>{msg.fp}</span>
+                    {msg.body && ctx.myFP == msg.fp && (
+                      <button
+                        class="icon"
+                        data-msg-idx={i}
+                        onClick={ctx.handlers.showDeleteMsgModalClick}
+                      >
+                        <ap-icon icon="trash" />
+                      </button>
+                    )}
+                  </div>
                   {unread && <span class="unread"></span>}
                 </div>
               );
@@ -260,7 +299,7 @@ const renderMessages = (ctx: RenderContext) => {
 const renderPostModal = (ctx: RenderContext) => {
   if (ctx.showPostModal) {
     return (
-      <ap-modal onClose={ctx.handlers.postModalClose}>
+      <ap-modal class="msg-form" onClose={ctx.handlers.postModalClose}>
         <div class="form-modal">
           <ap-input
             class="author"
@@ -290,4 +329,24 @@ const renderPostModal = (ctx: RenderContext) => {
       </ap-modal>
     );
   }
+};
+
+const renderDeleteMsgModal = (ctx: RenderContext) => {
+  if (!ctx.deleteMsgModal.show) {
+    return;
+  }
+
+  return (
+    <ap-modal class="delete-msg" onClose={ctx.handlers.deleteMsgModalClose}>
+      <div class="desc">{ctx.msgs.room.deleteMsg}</div>
+      <div class="buttons">
+        <button onClick={ctx.handlers.deleteMsgModalClose} class="clear cancel">
+          {ctx.msgs.common.cancel}
+        </button>
+        <button onClick={ctx.handlers.deleteMsgSubmit} class="submit">
+          {ctx.msgs.common.ok}
+        </button>
+      </div>
+    </ap-modal>
+  );
 };

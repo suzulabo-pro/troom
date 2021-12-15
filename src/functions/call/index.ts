@@ -4,6 +4,7 @@ import { validators } from '../json-schema';
 import { logger } from '../utils/logger';
 import { createRoom } from './create-room';
 import { deleteRoom } from './delete-room';
+import { deleteRoomMsg } from './delete-room-msg';
 import { editRoom } from './edit-room';
 import { putInviteCode } from './put-invite-code';
 import { putRoomMsg } from './put-room-msg';
@@ -43,6 +44,11 @@ export const httpsCallHandler = async (
       case 'PutRoomMsg':
         if (validators.PutRoomMsgParams(data)) {
           return putRoomMsg(data, context, adminApp);
+        }
+        break;
+      case 'DeleteRoomMsg':
+        if (validators.DeleteRoomMsgParams(data)) {
+          return deleteRoomMsg(data, context, adminApp);
         }
         break;
       case 'PutInviteCode':
