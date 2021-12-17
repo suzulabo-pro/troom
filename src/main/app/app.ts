@@ -290,19 +290,6 @@ export class App {
     const signMsg = concatArray(msg.k.toUint8Array(), msg.body.toUint8Array());
     const sign = nacl.sign.detached(signMsg, signKey);
 
-    {
-      const pubKey = msg.fp.toUint8Array();
-      const verify = nacl.sign.detached.verify(signMsg, sign, pubKey);
-      console.log({
-        verify,
-        signMsg,
-        sign,
-        pubKey,
-        signKey,
-        pair: nacl.sign.keyPair.fromSecretKey(signKey),
-      });
-    }
-
     return this.appFirebase.deleteRoomMsg({
       method: 'DeleteRoomMsg',
       id,
